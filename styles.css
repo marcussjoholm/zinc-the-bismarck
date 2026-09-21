@@ -39,15 +39,16 @@ button {
   display: grid;
   grid-template-areas: "panel map";
   grid-template-columns: 320px minmax(0, 1fr);
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .route-panel {
   z-index: 500;
   grid-area: panel;
   padding: 32px 24px;
-  overflow-y: auto;
+  overflow-y: scroll;
+  height: 100dvh;
   background: var(--mantle);
   box-shadow: 8px 0 30px rgb(17 17 27 / 35%);
 }
@@ -180,10 +181,13 @@ h1 {
   background: transparent;
   border: 0;
   border-radius: 6px;
+  transition: all 0.3s ease-in-out;
 }
 
 .stop-button:hover {
   background: var(--surface-0);
+  padding-left: 12px;
+  cursor: pointer;
 }
 
 .stop-button:focus-visible {

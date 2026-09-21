@@ -25,12 +25,50 @@ type HotelPin = PubPin & {
   address: string;
 };
 
-// Replace these examples with the real stops. The array order is the crawl order.
+type PixelOffset = {
+  x: number;
+  y: number;
+};
+
+// Venues are kept in the same order as the guide.
 const pubCrawlPins: PubPin[] = [
-  { name: "Mikkeller Bar", latitude: 55.6708, longitude: 12.5535 },
-  { name: "Lidkoeb", latitude: 55.6737, longitude: 12.5506 },
-  { name: "Taphouse", latitude: 55.6768, longitude: 12.5719 },
-  { name: "BRUS", latitude: 55.6961, longitude: 12.5505 },
+  { name: "Jernbanecafeen", latitude: 55.6721637, longitude: 12.5636709 },
+  { name: "Mikkeller Bar Viktoriagade", latitude: 55.6719575, longitude: 12.5575483 },
+  { name: "Dialekt Beer Bar", latitude: 55.672482, longitude: 12.557516 },
+  { name: "Fermentoren", latitude: 55.6679147, longitude: 12.5563801 },
+  { name: "Warpigs Brewpub", latitude: 55.6685278, longitude: 12.5599599 },
+  { name: "ÅBEN Kødbyen", latitude: 55.6682632, longitude: 12.5615533 },
+  { name: "Bootleggers Vesterbro", latitude: 55.6681772, longitude: 12.5494792 },
+  { name: "KIHOSKH", latitude: 55.6664138, longitude: 12.5529649 },
+  { name: "Væskebalancen", latitude: 55.6864751, longitude: 12.5584108 },
+  { name: "Ølbaren", latitude: 55.6892753, longitude: 12.5578754 },
+  { name: "Ølsnedkeren", latitude: 55.6859267, longitude: 12.5523374 },
+  { name: "BRUS", latitude: 55.6918656, longitude: 12.5557824 },
+  { name: "Kølsters Tolv Haner", latitude: 55.6876336, longitude: 12.5470224 },
+  { name: "People Like Us Beer Bar", latitude: 55.698261, longitude: 12.552981 },
+  { name: "Nørrebro Bryghus", latitude: 55.6902048, longitude: 12.5638481 },
+  { name: "Mikkeller & Friends", latitude: 55.6946446, longitude: 12.5432229 },
+  // Koelschip shares the same address; the tiny offset keeps both pins visible.
+  { name: "Koelschip", latitude: 55.6946446, longitude: 12.5434729 },
+  { name: "Dispensary", latitude: 55.6972572, longitude: 12.544631 },
+  { name: "Taphouse", latitude: 55.676199, longitude: 12.571519 },
+  { name: "SKAAL", latitude: 55.682326, longitude: 12.573648 },
+  { name: "Peders", latitude: 55.679073, longitude: 12.568998 },
+  { name: "Godt Øl", latitude: 55.6768192, longitude: 12.5760433 },
+  { name: "Amager Bryghus Taproom", latitude: 55.6843528, longitude: 12.5728215 },
+  { name: "Ørsted Ølbar", latitude: 55.6812668, longitude: 12.5645148 },
+  { name: "Ølhaven", latitude: 55.6821013, longitude: 12.5851463 },
+  { name: "Black Swan", latitude: 55.6864894, longitude: 12.5874331 },
+  { name: "BrewPub Copenhagen", latitude: 55.677163, longitude: 12.569487 },
+  { name: "Alefarm Taproom", latitude: 55.687207, longitude: 12.562081 },
+  { name: "Søernes Ølbar", latitude: 55.6962633, longitude: 12.5750656 },
+  { name: "Bicycle Brewing", latitude: 55.7055585, longitude: 12.5793537 },
+  { name: "Søhesten", latitude: 55.6903189, longitude: 12.5720729 },
+  { name: "Retroarkaden", latitude: 55.690397, longitude: 12.573306 },
+  { name: "Gamma NV", latitude: 55.7009959, longitude: 12.534039 },
+  { name: "Flying Couch Brewery & Taproom", latitude: 55.705701, longitude: 12.534661 },
+  { name: "Christiania Bryghus - The Lab", latitude: 55.673824, longitude: 12.600609 },
+  { name: "Mikkeller Baghaven", latitude: 55.6934851, longitude: 12.6078635 },
 ];
 
 const hotel: HotelPin = {
@@ -40,33 +78,34 @@ const hotel: HotelPin = {
   longitude: 12.5617,
 };
 
-const centralCopenhagenBounds = L.latLngBounds(
-  [55.655, 12.535],
-  [55.705, 12.625],
-);
-const initialZoom = window.matchMedia("(max-width: 700px)").matches ? 13 : 14;
+const pinBounds = L.latLngBounds([
+  ...pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
+  [hotel.latitude, hotel.longitude],
+]);
 
 const map = L.map("map", {
-  maxBounds: centralCopenhagenBounds,
+  maxBounds: pinBounds.pad(0.2),
   maxBoundsViscosity: 1,
   zoomControl: true,
-}).setView([55.682, 12.568], initialZoom);
+}).fitBounds(pinBounds, { padding: [52, 52] });
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "&copy; OpenStreetMap contributors",
   maxZoom: 19,
 }).addTo(map);
 
-map.setMinZoom(initialZoom);
+map.setMinZoom(map.getZoom());
 
 const hotelMarker = createHotelMarker(hotel);
+const markerOffsets = spreadOverlappingMarkers(pubCrawlPins, hotel);
 
 const markers = pubCrawlPins.map((pin, index) => {
+  const offset = markerOffsets[index];
   const marker = L.marker([pin.latitude, pin.longitude], {
     icon: L.divIcon({
       className: "pub-marker",
       html: `<span>${index + 1}</span>`,
-      iconAnchor: [18, 18],
+      iconAnchor: [18 - offset.x, 18 - offset.y],
       iconSize: [36, 36],
     }),
     title: pin.name,
@@ -90,7 +129,6 @@ const markers = pubCrawlPins.map((pin, index) => {
     className: "pub-label",
     direction: "right",
     offset: [12, 0],
-    permanent: true,
   });
 
   return marker;
@@ -110,6 +148,43 @@ if (pubCrawlPins.length > 1) {
 renderStopList();
 renderRouteSummary();
 renderHotel();
+
+function spreadOverlappingMarkers(pins: PubPin[], hotelPin: HotelPin): PixelOffset[] {
+  const minimumDistance = 38;
+  const occupiedPoints = [
+    map.latLngToLayerPoint([hotelPin.latitude, hotelPin.longitude]),
+  ];
+  const candidates: PixelOffset[] = [{ x: 0, y: 0 }];
+
+  [38, 54, 72].forEach((radius) => {
+    for (let angle = 0; angle < 360; angle += 45) {
+      const radians = degreesToRadians(angle);
+      candidates.push({
+        x: Math.round(Math.cos(radians) * radius),
+        y: Math.round(Math.sin(radians) * radius),
+      });
+    }
+  });
+
+  return pins.map((pin) => {
+    const basePoint = map.latLngToLayerPoint([pin.latitude, pin.longitude]);
+    const offset =
+      candidates.find((candidate) =>
+        occupiedPoints.every((occupiedPoint: { x: number; y: number }) => {
+          const xDistance = basePoint.x + candidate.x - occupiedPoint.x;
+          const yDistance = basePoint.y + candidate.y - occupiedPoint.y;
+          return Math.hypot(xDistance, yDistance) >= minimumDistance;
+        }),
+      ) ?? candidates[candidates.length - 1];
+
+    occupiedPoints.push({
+      x: basePoint.x + offset.x,
+      y: basePoint.y + offset.y,
+    });
+
+    return offset;
+  });
+}
 
 function createHotelMarker(pin: HotelPin): any {
   const marker = L.marker([pin.latitude, pin.longitude], {
@@ -196,8 +271,8 @@ function renderRouteSummary(): void {
       0,
     );
 
-  const stopText = `${pubCrawlPins.length} ${pubCrawlPins.length === 1 ? "stop" : "stops"}`;
-  const distanceText = `${totalDistance.toFixed(1)} km between stops`;
+  const stopText = `${pubCrawlPins.length} ${pubCrawlPins.length === 1 ? "stopp" : "stopp"}`;
+  const distanceText = `${totalDistance.toFixed(1)} km mellan alla stopp`;
   getElement("route-summary").textContent = `${stopText} / ${distanceText}`;
 }
 
