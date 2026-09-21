@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A pub crawl map for central Copenhagen" />
+    <title>Copenhagen Pub Crawl</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="styles.css?v=1" />
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script defer src="dist/index.js?v=1"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="route-panel">
+        <header>
+          <p class="location">Central Copenhagen</p>
+          <h1>Pub crawl</h1>
+          <p id="route-summary" class="route-summary"></p>
+        </header>
+
+        <ol id="stop-list" class="stop-list" aria-label="Pub crawl stops"></ol>
+      </aside>
+
+      <section class="map-region" aria-label="Map of the pub crawl">
+        <div id="map"></div>
+      </section>
+    </main>
+
+    <noscript>This map needs JavaScript enabled.</noscript>
+  </body>
+</html>
