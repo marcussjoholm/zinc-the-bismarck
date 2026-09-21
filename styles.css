@@ -111,6 +111,12 @@ h1 {
   place-items: center;
 }
 
+.hotel-symbol svg,
+.hotel-marker svg {
+  width: 22px;
+  height: 22px;
+}
+
 .hotel-details {
   display: grid;
   gap: 2px;
@@ -276,10 +282,9 @@ h1 {
   transform: rotate(45deg);
 }
 
-.hotel-marker span {
+.hotel-marker svg {
   position: relative;
   z-index: 1;
-  line-height: 1;
 }
 
 .leaflet-tooltip.pub-label {
@@ -295,21 +300,6 @@ h1 {
 
 .leaflet-tooltip-right.pub-label::before {
   border-right-color: rgb(49 50 68 / 96%);
-}
-
-.leaflet-tooltip.hotel-label {
-  padding: 5px 8px;
-  color: var(--crust);
-  font-size: 13px;
-  font-weight: 700;
-  background: rgb(137 180 250 / 96%);
-  border: 0;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgb(17 17 27 / 55%);
-}
-
-.leaflet-tooltip-top.hotel-label::before {
-  border-top-color: rgb(137 180 250 / 96%);
 }
 
 .pub-popup {
