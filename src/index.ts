@@ -6,6 +6,10 @@ type PubPin = {
   longitude: number;
 };
 
+type HotelPin = PubPin & {
+  address: string;
+};
+
 // Replace these examples with the real stops. The array order is the crawl order.
 const pubCrawlPins: PubPin[] = [
   { name: "Mikkeller Bar", latitude: 55.6708, longitude: 12.5535 },
@@ -13,6 +17,13 @@ const pubCrawlPins: PubPin[] = [
   { name: "Taphouse", latitude: 55.6768, longitude: 12.5719 },
   { name: "BRUS", latitude: 55.6961, longitude: 12.5505 },
 ];
+
+const hotel: HotelPin = {
+  name: "Imperial Hotel",
+  address: "Vester Farimagsgade 9",
+  latitude: 55.6757,
+  longitude: 12.5617,
+};
 
 const centralCopenhagenBounds = L.latLngBounds(
   [55.655, 12.535],
@@ -32,6 +43,8 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 map.setMinZoom(initialZoom);
+
+const hotelMarker = createHotelMarker(hotel);
 
 const markers = pubCrawlPins.map((pin, index) => {
   const marker = L.marker([pin.latitude, pin.longitude], {
@@ -81,6 +94,56 @@ if (pubCrawlPins.length > 1) {
 
 renderStopList();
 renderRouteSummary();
+renderHotel();
+
+function createHotelMarker(pin: HotelPin): any {
+  const marker = L.marker([pin.latitude, pin.longitude], {
+    icon: L.divIcon({
+      className: "hotel-marker",
+      html: "<span>H</span>",
+      iconAnchor: [20, 46],
+      iconSize: [40, 46],
+    }),
+    title: pin.name,
+    zIndexOffset: 1000,
+  }).addTo(map);
+
+  const popup = document.createElement("div");
+  popup.className = "hotel-popup";
+
+  const popupType = document.createElement("span");
+  popupType.textContent = "Your hotel";
+
+  const popupName = document.createElement("strong");
+  popupName.textContent = pin.name;
+
+  const popupAddress = document.createElement("span");
+  popupAddress.textContent = pin.address;
+
+  popup.append(popupType, popupName, popupAddress);
+  marker.bindPopup(popup);
+
+  const label = document.createElement("span");
+  label.textContent = pin.name;
+  marker.bindTooltip(label, {
+    className: "hotel-label",
+    direction: "top",
+    offset: [0, -16],
+    permanent: true,
+  });
+
+  return marker;
+}
+
+function renderHotel(): void {
+  getElement("hotel-name").textContent = hotel.name;
+  getElement("hotel-address").textContent = hotel.address;
+
+  getElement<HTMLButtonElement>("hotel-button").addEventListener("click", () => {
+    map.flyTo([hotel.latitude, hotel.longitude], Math.max(map.getZoom(), 15));
+    hotelMarker.openPopup();
+  });
+}
 
 function renderStopList(): void {
   const stopList = getElement<HTMLOListElement>("stop-list");

@@ -43,7 +43,7 @@ button {
   color: #247054;
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -57,9 +57,70 @@ h1 {
 
 .route-summary {
   min-height: 20px;
-  margin: 12px 0 28px;
+  margin: 12px 0 20px;
   color: #68706b;
   font-size: 14px;
+}
+
+.hotel-button {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  color: inherit;
+  text-align: left;
+  background: #e8f3f5;
+  border: 1px solid #c9dfe3;
+  border-radius: 8px;
+}
+
+.hotel-button:hover {
+  background: #dcecef;
+}
+
+.hotel-button:focus-visible {
+  outline: 3px solid rgb(36 107 120 / 35%);
+  outline-offset: 2px;
+}
+
+.hotel-symbol {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  font-size: 19px;
+  font-weight: 750;
+  background: #246b78;
+  border-radius: 7px;
+  place-items: center;
+}
+
+.hotel-details {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hotel-kicker,
+.hotel-details > span:last-child {
+  color: #587077;
+  font-size: 12px;
+}
+
+.hotel-details strong {
+  overflow-wrap: anywhere;
+  font-size: 15px;
+}
+
+.stops-heading {
+  margin: 24px 0 8px;
+  color: #68706b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .stop-list {
@@ -170,6 +231,39 @@ h1 {
   line-height: 1;
 }
 
+.hotel-marker {
+  position: relative;
+  display: grid;
+  height: 40px;
+  color: #fff;
+  font-size: 19px;
+  font-weight: 750;
+  background: #246b78;
+  border: 3px solid #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(32 36 33 / 35%);
+  place-items: center;
+}
+
+.hotel-marker::after {
+  position: absolute;
+  bottom: -7px;
+  left: 13px;
+  width: 10px;
+  height: 10px;
+  background: #246b78;
+  border-right: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.hotel-marker span {
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+}
+
 .leaflet-tooltip.pub-label {
   padding: 5px 8px;
   color: #202421;
@@ -185,6 +279,21 @@ h1 {
   border-right-color: rgb(255 255 255 / 94%);
 }
 
+.leaflet-tooltip.hotel-label {
+  padding: 5px 8px;
+  color: #173f47;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgb(232 243 245 / 96%);
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgb(32 36 33 / 18%);
+}
+
+.leaflet-tooltip-top.hotel-label::before {
+  border-top-color: rgb(232 243 245 / 96%);
+}
+
 .pub-popup {
   display: grid;
   gap: 2px;
@@ -197,6 +306,21 @@ h1 {
 }
 
 .pub-popup strong {
+  font-size: 15px;
+}
+
+.hotel-popup {
+  display: grid;
+  gap: 2px;
+  min-width: 160px;
+}
+
+.hotel-popup span {
+  color: #587077;
+  font-size: 12px;
+}
+
+.hotel-popup strong {
   font-size: 15px;
 }
 
