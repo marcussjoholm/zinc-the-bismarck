@@ -85,7 +85,7 @@ if (pubCrawlPins.length > 1) {
   L.polyline(
     pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
     {
-      color: "#d84436",
+      color: "#f38ba8",
       opacity: 0.9,
       weight: 4,
     },

@@ -1,6 +1,20 @@
 :root {
-  color: #202421;
-  background: #eef1ee;
+  --crust: #11111b;
+  --mantle: #181825;
+  --base: #1e1e2e;
+  --surface-0: #313244;
+  --surface-1: #45475a;
+  --surface-2: #585b70;
+  --overlay-0: #6c7086;
+  --overlay-1: #7f849c;
+  --subtext-0: #a6adc8;
+  --subtext-1: #bac2de;
+  --text: #cdd6f4;
+  --blue: #89b4fa;
+  --teal: #94e2d5;
+  --red: #f38ba8;
+  color: var(--text);
+  background: var(--base);
   font-family:
     Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
@@ -34,13 +48,13 @@ button {
   grid-area: panel;
   padding: 32px 24px;
   overflow-y: auto;
-  background: #fff;
-  box-shadow: 8px 0 30px rgb(32 36 33 / 10%);
+  background: var(--mantle);
+  box-shadow: 8px 0 30px rgb(17 17 27 / 35%);
 }
 
 .location {
   margin: 0 0 8px;
-  color: #247054;
+  color: var(--teal);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0;
@@ -58,7 +72,7 @@ h1 {
 .route-summary {
   min-height: 20px;
   margin: 12px 0 20px;
-  color: #68706b;
+  color: var(--subtext-0);
   font-size: 14px;
 }
 
@@ -71,17 +85,17 @@ h1 {
   padding: 12px;
   color: inherit;
   text-align: left;
-  background: #e8f3f5;
-  border: 1px solid #c9dfe3;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
   border-radius: 8px;
 }
 
 .hotel-button:hover {
-  background: #dcecef;
+  background: var(--surface-1);
 }
 
 .hotel-button:focus-visible {
-  outline: 3px solid rgb(36 107 120 / 35%);
+  outline: 3px solid rgb(137 180 250 / 45%);
   outline-offset: 2px;
 }
 
@@ -89,10 +103,10 @@ h1 {
   display: grid;
   width: 40px;
   height: 40px;
-  color: #fff;
+  color: var(--crust);
   font-size: 19px;
   font-weight: 750;
-  background: #246b78;
+  background: var(--blue);
   border-radius: 7px;
   place-items: center;
 }
@@ -105,7 +119,7 @@ h1 {
 
 .hotel-kicker,
 .hotel-details > span:last-child {
-  color: #587077;
+  color: var(--subtext-0);
   font-size: 12px;
 }
 
@@ -116,7 +130,7 @@ h1 {
 
 .stops-heading {
   margin: 24px 0 8px;
-  color: #68706b;
+  color: var(--subtext-0);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0;
@@ -138,10 +152,10 @@ h1 {
 .stop-list li:not(:last-child)::after {
   position: absolute;
   top: 42px;
-  bottom: -10px;
+  bottom: -30px;
   left: 17px;
   width: 2px;
-  background: #e1e5e1;
+  background: var(--surface-1);
   content: "";
 }
 
@@ -163,11 +177,11 @@ h1 {
 }
 
 .stop-button:hover {
-  background: #f2f6f3;
+  background: var(--surface-0);
 }
 
 .stop-button:focus-visible {
-  outline: 3px solid rgb(36 112 84 / 35%);
+  outline: 3px solid rgb(243 139 168 / 45%);
   outline-offset: 2px;
 }
 
@@ -175,13 +189,13 @@ h1 {
   display: grid;
   width: 36px;
   height: 36px;
-  color: #fff;
+  color: var(--crust);
   font-size: 14px;
   font-weight: 700;
-  background: #d84436;
-  border: 3px solid #fff;
+  background: var(--red);
+  border: 3px solid var(--mantle);
   border-radius: 50%;
-  box-shadow: 0 1px 4px rgb(32 36 33 / 25%);
+  box-shadow: 0 1px 5px rgb(17 17 27 / 55%);
   place-items: center;
 }
 
@@ -197,7 +211,7 @@ h1 {
 }
 
 .stop-details span {
-  color: #777e79;
+  color: var(--overlay-1);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
 }
@@ -212,18 +226,22 @@ h1 {
   width: 100%;
   height: 100%;
   min-height: 420px;
-  background: #dce7e2;
+  background: var(--base);
+}
+
+.leaflet-tile-pane {
+  filter: invert(0.93) hue-rotate(180deg) brightness(0.78) contrast(0.96) saturate(0.65);
 }
 
 .pub-marker {
   display: grid;
-  color: #fff;
+  color: var(--crust);
   font-size: 14px;
   font-weight: 700;
-  background: #d84436;
-  border: 3px solid #fff;
+  background: var(--red);
+  border: 3px solid var(--mantle);
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgb(32 36 33 / 35%);
+  box-shadow: 0 2px 8px rgb(17 17 27 / 65%);
   place-items: center;
 }
 
@@ -235,13 +253,13 @@ h1 {
   position: relative;
   display: grid;
   height: 40px;
-  color: #fff;
+  color: var(--crust);
   font-size: 19px;
   font-weight: 750;
-  background: #246b78;
-  border: 3px solid #fff;
+  background: var(--blue);
+  border: 3px solid var(--mantle);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgb(32 36 33 / 35%);
+  box-shadow: 0 2px 8px rgb(17 17 27 / 65%);
   place-items: center;
 }
 
@@ -251,9 +269,9 @@ h1 {
   left: 13px;
   width: 10px;
   height: 10px;
-  background: #246b78;
-  border-right: 3px solid #fff;
-  border-bottom: 3px solid #fff;
+  background: var(--blue);
+  border-right: 3px solid var(--mantle);
+  border-bottom: 3px solid var(--mantle);
   content: "";
   transform: rotate(45deg);
 }
@@ -266,32 +284,32 @@ h1 {
 
 .leaflet-tooltip.pub-label {
   padding: 5px 8px;
-  color: #202421;
+  color: var(--text);
   font-size: 13px;
   font-weight: 700;
-  background: rgb(255 255 255 / 94%);
+  background: rgb(49 50 68 / 96%);
   border: 0;
   border-radius: 4px;
-  box-shadow: 0 1px 5px rgb(32 36 33 / 18%);
+  box-shadow: 0 2px 8px rgb(17 17 27 / 55%);
 }
 
 .leaflet-tooltip-right.pub-label::before {
-  border-right-color: rgb(255 255 255 / 94%);
+  border-right-color: rgb(49 50 68 / 96%);
 }
 
 .leaflet-tooltip.hotel-label {
   padding: 5px 8px;
-  color: #173f47;
+  color: var(--crust);
   font-size: 13px;
   font-weight: 700;
-  background: rgb(232 243 245 / 96%);
+  background: rgb(137 180 250 / 96%);
   border: 0;
   border-radius: 4px;
-  box-shadow: 0 1px 5px rgb(32 36 33 / 18%);
+  box-shadow: 0 2px 8px rgb(17 17 27 / 55%);
 }
 
 .leaflet-tooltip-top.hotel-label::before {
-  border-top-color: rgb(232 243 245 / 96%);
+  border-top-color: rgb(137 180 250 / 96%);
 }
 
 .pub-popup {
@@ -301,7 +319,7 @@ h1 {
 }
 
 .pub-popup span {
-  color: #68706b;
+  color: var(--subtext-0);
   font-size: 12px;
 }
 
@@ -316,7 +334,7 @@ h1 {
 }
 
 .hotel-popup span {
-  color: #587077;
+  color: var(--subtext-0);
   font-size: 12px;
 }
 
@@ -324,8 +342,49 @@ h1 {
   font-size: 15px;
 }
 
-.leaflet-control-attribution {
+.leaflet-container .leaflet-control-attribution {
+  color: var(--subtext-0);
+  background: rgb(24 24 37 / 88%);
   font-size: 10px;
+}
+
+.leaflet-container .leaflet-control-attribution a {
+  color: var(--blue);
+}
+
+.leaflet-bar {
+  border: 1px solid var(--surface-1);
+  box-shadow: 0 2px 8px rgb(17 17 27 / 45%);
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  color: var(--text);
+  background: var(--surface-0);
+  border-bottom-color: var(--surface-1);
+}
+
+.leaflet-bar a:hover {
+  background: var(--surface-1);
+}
+
+.leaflet-bar a.leaflet-disabled {
+  color: var(--overlay-0);
+  background: var(--base);
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  color: var(--text);
+  background: var(--surface-0);
+}
+
+.leaflet-popup-content-wrapper {
+  box-shadow: 0 3px 14px rgb(17 17 27 / 65%);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--subtext-0);
 }
 
 @media (max-width: 700px) {
@@ -340,7 +399,7 @@ h1 {
   .route-panel {
     padding: 24px 20px 32px;
     overflow: visible;
-    box-shadow: 0 -8px 30px rgb(32 36 33 / 10%);
+    box-shadow: 0 -8px 30px rgb(17 17 27 / 35%);
   }
 
   h1 {
