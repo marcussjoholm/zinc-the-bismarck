@@ -25,11 +25,6 @@ type HotelPin = PubPin & {
   address: string;
 };
 
-type PixelOffset = {
-  x: number;
-  y: number;
-};
-
 // Venues are kept in the same order as the guide.
 const pubCrawlPins: PubPin[] = [
   { name: "Jernbanecafeen", latitude: 55.6721637, longitude: 12.5636709 },
@@ -97,7 +92,10 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 map.setMinZoom(map.getZoom());
 
 const hotelMarker = createHotelMarker(hotel);
-const markerPositions = spreadOverlappingMarkers(pubCrawlPins, hotel);
+const markerPositions: Array<[number, number]> = pubCrawlPins.map((pin) => [
+  pin.latitude,
+  pin.longitude,
+]);
 
 const markers = pubCrawlPins.map((pin, index) => {
   const marker = L.marker(markerPositions[index], {
@@ -199,49 +197,6 @@ function drawAnimatedRoute(): void {
 
   map.on("zoomstart", finishOnZoom);
   void animation.finished.then(finalize, finalize);
-}
-
-function spreadOverlappingMarkers(
-  pins: PubPin[],
-  hotelPin: HotelPin,
-): Array<[number, number]> {
-  const minimumDistance = 38;
-  const occupiedPoints = [
-    map.latLngToLayerPoint([hotelPin.latitude, hotelPin.longitude]),
-  ];
-  const candidates: PixelOffset[] = [{ x: 0, y: 0 }];
-
-  [38, 54, 72].forEach((radius) => {
-    for (let angle = 0; angle < 360; angle += 45) {
-      const radians = degreesToRadians(angle);
-      candidates.push({
-        x: Math.round(Math.cos(radians) * radius),
-        y: Math.round(Math.sin(radians) * radius),
-      });
-    }
-  });
-
-  return pins.map((pin) => {
-    const basePoint = map.latLngToLayerPoint([pin.latitude, pin.longitude]);
-    const offset =
-      candidates.find((candidate) =>
-        occupiedPoints.every((occupiedPoint: { x: number; y: number }) => {
-          const xDistance = basePoint.x + candidate.x - occupiedPoint.x;
-          const yDistance = basePoint.y + candidate.y - occupiedPoint.y;
-          return Math.hypot(xDistance, yDistance) >= minimumDistance;
-        }),
-      ) ?? candidates[candidates.length - 1];
-
-    const adjustedPoint = {
-      x: basePoint.x + offset.x,
-      y: basePoint.y + offset.y,
-    };
-    const adjustedPosition = map.layerPointToLatLng(adjustedPoint);
-
-    occupiedPoints.push(adjustedPoint);
-
-    return [adjustedPosition.lat, adjustedPosition.lng];
-  });
 }
 
 function createHotelMarker(pin: HotelPin): any {
