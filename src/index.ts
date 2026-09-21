@@ -97,15 +97,14 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 map.setMinZoom(map.getZoom());
 
 const hotelMarker = createHotelMarker(hotel);
-const markerOffsets = spreadOverlappingMarkers(pubCrawlPins, hotel);
+const markerPositions = spreadOverlappingMarkers(pubCrawlPins, hotel);
 
 const markers = pubCrawlPins.map((pin, index) => {
-  const offset = markerOffsets[index];
-  const marker = L.marker([pin.latitude, pin.longitude], {
+  const marker = L.marker(markerPositions[index], {
     icon: L.divIcon({
       className: "pub-marker",
       html: `<span>${index + 1}</span>`,
-      iconAnchor: [18 - offset.x, 18 - offset.y],
+      iconAnchor: [18, 18],
       iconSize: [36, 36],
     }),
     title: pin.name,
@@ -134,22 +133,78 @@ const markers = pubCrawlPins.map((pin, index) => {
   return marker;
 });
 
-if (pubCrawlPins.length > 1) {
-  L.polyline(
-    pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
-    {
-      color: "#f38ba8",
-      opacity: 0.9,
-      weight: 4,
-    },
-  ).addTo(map);
-}
+void drawAnimatedRoute();
 
 renderStopList();
 renderRouteSummary();
 renderHotel();
 
-function spreadOverlappingMarkers(pins: PubPin[], hotelPin: HotelPin): PixelOffset[] {
+function drawAnimatedRoute(): void {
+  if (pubCrawlPins.length < 2) {
+    return;
+  }
+
+  const routeStyle = {
+    color: "#f38ba8",
+    interactive: false,
+    lineCap: "round",
+    opacity: 0.9,
+    weight: 4,
+  };
+
+  const route = L.polyline(markerPositions, routeStyle).addTo(map);
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  const path = route.getElement() as SVGPathElement | null;
+
+  if (!path) {
+    return;
+  }
+
+  const length = path.getTotalLength();
+  path.style.strokeDasharray = `${length} ${length}`;
+  path.style.strokeDashoffset = String(length);
+
+  const animation = path.animate(
+    [
+      { strokeDashoffset: String(length) },
+      { strokeDashoffset: "0" },
+    ],
+    {
+      duration: 8400,
+      easing: "linear",
+      fill: "forwards",
+    },
+  );
+  let finalized = false;
+
+  const finalize = (): void => {
+    if (finalized) {
+      return;
+    }
+
+    finalized = true;
+    path.style.strokeDasharray = "none";
+    path.style.strokeDashoffset = "0";
+    map.off("zoomstart", finishOnZoom);
+  };
+
+  const finishOnZoom = (): void => {
+    animation.finish();
+    finalize();
+  };
+
+  map.on("zoomstart", finishOnZoom);
+  void animation.finished.then(finalize, finalize);
+}
+
+function spreadOverlappingMarkers(
+  pins: PubPin[],
+  hotelPin: HotelPin,
+): Array<[number, number]> {
   const minimumDistance = 38;
   const occupiedPoints = [
     map.latLngToLayerPoint([hotelPin.latitude, hotelPin.longitude]),
@@ -177,12 +232,15 @@ function spreadOverlappingMarkers(pins: PubPin[], hotelPin: HotelPin): PixelOffs
         }),
       ) ?? candidates[candidates.length - 1];
 
-    occupiedPoints.push({
+    const adjustedPoint = {
       x: basePoint.x + offset.x,
       y: basePoint.y + offset.y,
-    });
+    };
+    const adjustedPosition = map.layerPointToLatLng(adjustedPoint);
 
-    return offset;
+    occupiedPoints.push(adjustedPoint);
+
+    return [adjustedPosition.lat, adjustedPosition.lng];
   });
 }
 
@@ -253,7 +311,7 @@ function renderStopList(): void {
     details.append(name, coordinates);
     button.append(number, details);
     button.addEventListener("click", () => {
-      map.flyTo([pin.latitude, pin.longitude], Math.max(map.getZoom(), 15));
+      map.flyTo(markerPositions[index], Math.max(map.getZoom(), 15));
       markers[index].openPopup();
     });
 
