@@ -2,12 +2,18 @@
   "name": "zinc-the-bismarck",
   "version": "1.0.0",
   "description": "A small local pub crawl map for central Copenhagen",
+  "type": "module",
   "scripts": {
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && tsc -p tsconfig.optimizer.json --noEmit && vite build",
+    "test": "tsx --test optimizer/*.test.ts",
+    "optimize": "node --import tsx optimizer/optimize.ts",
+    "optimize:demo": "npm run optimize && npm start",
     "start": "vite --host 127.0.0.1 --port 4173",
     "preview": "vite preview --host 127.0.0.1 --port 4173"
   },
   "devDependencies": {
+    "@types/node": "^26.6.2",
+    "tsx": "^4.23.15",
     "typescript": "^5.5.3",
     "vite": "^8.3.0"
   },

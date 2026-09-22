@@ -1,0 +1,119 @@
+[
+  {
+    "id": "jernbanecafeen",
+    "name": "Jernbanecafeen",
+    "latitude": 55.6721637,
+    "longitude": 12.5636709,
+    "beerTypes": ["lager", "classic"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 5, "vibe": "classic" }
+  },
+  {
+    "id": "mikkeller-viktoriagade",
+    "name": "Mikkeller Bar Viktoriagade",
+    "latitude": 55.6719575,
+    "longitude": 12.5575483,
+    "beerTypes": ["ipa", "stout", "sour"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 4, "vibe": "craft" }
+  },
+  {
+    "id": "dialekt",
+    "name": "Dialekt Beer Bar",
+    "latitude": 55.672482,
+    "longitude": 12.557516,
+    "beerTypes": ["lager", "ipa", "alcohol-free"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 4, "vibe": "quiet" }
+  },
+  {
+    "id": "fermentoren",
+    "name": "Fermentoren",
+    "latitude": 55.6679147,
+    "longitude": 12.5563801,
+    "beerTypes": ["ipa", "stout", "sour"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": true, "coziness": 3, "vibe": "cellar" }
+  },
+  {
+    "id": "warpigs",
+    "name": "Warpigs Brewpub",
+    "latitude": 55.6685278,
+    "longitude": 12.5599599,
+    "beerTypes": ["ipa", "stout", "lager"],
+    "servesMeals": true,
+    "attributes": { "hasDartboard": false, "coziness": 2, "vibe": "loud" }
+  },
+  {
+    "id": "aaben-koedbyen",
+    "name": "ÅBEN Kødbyen",
+    "latitude": 55.6682632,
+    "longitude": 12.5615533,
+    "beerTypes": ["ipa", "lager", "sour"],
+    "servesMeals": true,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "modern" }
+  },
+  {
+    "id": "bootleggers-vesterbro",
+    "name": "Bootleggers Vesterbro",
+    "latitude": 55.6681772,
+    "longitude": 12.5494792,
+    "beerTypes": ["ipa", "lager", "stout"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": true, "coziness": 3, "vibe": "sports" }
+  },
+  {
+    "id": "kihoskh",
+    "name": "KIHOSKH",
+    "latitude": 55.6664138,
+    "longitude": 12.5529649,
+    "beerTypes": ["lager", "ipa", "alcohol-free"],
+    "servesMeals": true,
+    "attributes": { "hasDartboard": false, "coziness": 2, "vibe": "shop" }
+  },
+  {
+    "id": "taphouse",
+    "name": "Taphouse",
+    "latitude": 55.676199,
+    "longitude": 12.571519,
+    "beerTypes": ["ipa", "stout", "sour", "lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "busy" }
+  },
+  {
+    "id": "peders",
+    "name": "Peders",
+    "latitude": 55.679073,
+    "longitude": 12.568998,
+    "beerTypes": ["ipa", "stout", "lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": true, "coziness": 5, "vibe": "cellar" }
+  },
+  {
+    "id": "brewpub-copenhagen",
+    "name": "BrewPub Copenhagen",
+    "latitude": 55.677163,
+    "longitude": 12.569487,
+    "beerTypes": ["ipa", "stout", "lager"],
+    "servesMeals": true,
+    "attributes": { "hasDartboard": false, "coziness": 4, "vibe": "courtyard" }
+  },
+  {
+    "id": "oersted-oelbar",
+    "name": "Ørsted Ølbar",
+    "latitude": 55.6812668,
+    "longitude": 12.5645148,
+    "beerTypes": ["ipa", "stout", "lager", "alcohol-free"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": true, "coziness": 4, "vibe": "games" }
+  },
+  {
+    "id": "godt-oel",
+    "name": "Godt Øl",
+    "latitude": 55.6768192,
+    "longitude": 12.5760433,
+    "beerTypes": ["ipa", "stout", "sour"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 5, "vibe": "quiet" }
+  }
+]

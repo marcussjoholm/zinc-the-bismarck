@@ -179,7 +179,7 @@ function createPubMarker(pin: PubPin, index: number): any {
 }
 
 function drawAnimatedRoute(): void {
-  if (pubCrawlPins.length < 2) {
+  if (pubCrawlPins.length < 1) {
     return;
   }
 
@@ -191,7 +191,10 @@ function drawAnimatedRoute(): void {
     weight: 4,
   };
 
-  const route = L.polyline(markerPositions, routeStyle).addTo(map);
+  const route = L.polyline(
+    [[hotel.latitude, hotel.longitude], ...markerPositions],
+    routeStyle,
+  ).addTo(map);
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     return;
@@ -317,16 +320,13 @@ function renderStopList(): void {
 }
 
 function renderRouteSummary(): void {
-  const totalDistance = pubCrawlPins
-    .slice(1)
-    .reduce(
-      (distance, pin, index) =>
-        distance + distanceInKilometres(pubCrawlPins[index], pin),
-      0,
-    );
+  const totalDistance = pubCrawlPins.reduce((distance, pin, index) => {
+    const previousStop = index === 0 ? hotel : pubCrawlPins[index - 1];
+    return distance + distanceInKilometres(previousStop, pin);
+  }, 0);
 
   const stopText = `${pubCrawlPins.length} ${pubCrawlPins.length === 1 ? "stopp" : "stopp"}`;
-  const distanceText = `${totalDistance.toFixed(1)} km mellan alla stopp`;
+  const distanceText = `${totalDistance.toFixed(1)} km fågelvägsestimat`;
   getElement("route-summary").textContent = `${stopText} / ${distanceText}`;
 }
 

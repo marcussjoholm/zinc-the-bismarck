@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Ørsted Ølbar",
+    "latitude": 55.6812668,
+    "longitude": 12.5645148
+  },
+  {
+    "name": "Peders",
+    "latitude": 55.679073,
+    "longitude": 12.568998
+  },
+  {
+    "name": "BrewPub Copenhagen",
+    "latitude": 55.677163,
+    "longitude": 12.569487
+  },
+  {
+    "name": "Taphouse",
+    "latitude": 55.676199,
+    "longitude": 12.571519
+  },
+  {
+    "name": "Jernbanecafeen",
+    "latitude": 55.6721637,
+    "longitude": 12.5636709
+  },
+  {
+    "name": "ÅBEN Kødbyen",
+    "latitude": 55.6682632,
+    "longitude": 12.5615533
+  },
+  {
+    "name": "Warpigs Brewpub",
+    "latitude": 55.6685278,
+    "longitude": 12.5599599
+  },
+  {
+    "name": "Fermentoren",
+    "latitude": 55.6679147,
+    "longitude": 12.5563801
+  },
+  {
+    "name": "Mikkeller Bar Viktoriagade",
+    "latitude": 55.6719575,
+    "longitude": 12.5575483
+  },
+  {
+    "name": "Dialekt Beer Bar",
+    "latitude": 55.672482,
+    "longitude": 12.557516
+  }
+]

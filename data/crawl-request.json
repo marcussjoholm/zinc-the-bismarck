@@ -1,0 +1,8 @@
+{
+  "stopCount": 10,
+  "requiredBeerTypes": ["ipa", "stout", "lager"],
+  "requireMeal": true,
+  "minDistanceKm": 2,
+  "maxDistanceKm": 5,
+  "returnToHotel": true
+}
