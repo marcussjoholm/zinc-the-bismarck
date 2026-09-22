@@ -2,15 +2,14 @@
   "name": "zinc-the-bismarck",
   "version": "1.0.0",
   "description": "A small local pub crawl map for central Copenhagen",
-  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && python3 -m http.server 4173",
-    "watch": "tsc --watch"
+    "build": "tsc --noEmit && vite build",
+    "start": "vite --host 127.0.0.1 --port 4173",
+    "preview": "vite preview --host 127.0.0.1 --port 4173"
   },
-  "dependencies": {},
   "devDependencies": {
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vite": "^8.3.0"
   },
   "private": true
 }
