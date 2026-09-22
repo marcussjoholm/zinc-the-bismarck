@@ -6,8 +6,10 @@
   "scripts": {
     "build": "tsc --noEmit && tsc -p tsconfig.optimizer.json --noEmit && vite build",
     "test": "tsx --test optimizer/*.test.ts",
-    "optimize": "node --import tsx optimizer/optimize.ts",
+    "optimize": "node --import tsx optimizer/optimize.ts --mode optimize",
+    "satisfy": "node --import tsx optimizer/optimize.ts --mode satisfy",
     "optimize:demo": "npm run optimize && npm start",
+    "satisfy:demo": "npm run satisfy && npm start",
     "start": "vite --host 127.0.0.1 --port 4173",
     "preview": "vite preview --host 127.0.0.1 --port 4173"
   },

@@ -1,8 +1,8 @@
 {
-  "stopCount": 12,
+  "stopCount": 20,
   "requiredBeerTypes": ["lager"],
   "requireMeal": false,
   "minDistanceKm": 2,
-  "maxDistanceKm": 50,
+  "maxDistanceKm": 9,
   "returnToHotel": true
 }

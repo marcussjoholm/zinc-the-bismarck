@@ -1,6 +1,6 @@
 include "pub-crawl-base.mzn";
 
-solve minimize route_distance_m;
+solve satisfy;
 
 output [
   "{\"route\":", show(route),

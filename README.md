@@ -1,10 +1,11 @@
 # Copenhagen Pub Crawl
 
-A local TypeScript and MiniZinc demo that selects an optimal pub crawl and
-shows it on a map of central Copenhagen.
+A local TypeScript and MiniZinc demo that selects and visualizes pub crawls
+through central Copenhagen.
 
-The optimizer chooses both the pubs and their order. It starts at the Imperial
-Hotel, applies the requested constraints, and minimizes straight-line distance.
+Both solve modes choose the pubs and their order, start at the Imperial Hotel,
+and apply the same constraints. Satisfaction returns the first valid route;
+optimization finds and proves the shortest valid route.
 
 ## Prerequisites
 
@@ -24,10 +25,10 @@ The solver list should contain Gecode.
 ## Quick Start
 
 1. Edit the constraints in `data/crawl-request.json`.
-2. Generate a route:
+2. Generate the first valid route:
 
    ```bash
-   npm run optimize
+   npm run satisfy
    ```
 
 3. Start the map:
@@ -39,14 +40,18 @@ The solver list should contain Gecode.
 4. Open the generated crawl:
 
    ```text
-   http://127.0.0.1:4173/?data=data/optimized-crawl.json
+   http://127.0.0.1:4173/?data=data/satisfied-crawl.json
    ```
 
-To optimize and start the map with one command:
+To generate a crawl and start the map with one command:
 
 ```bash
 npm run optimize:demo
+npm run satisfy:demo
 ```
+
+Use `npm run optimize` when you need the shortest route. It can take much
+longer because MiniZinc must prove that no better route exists.
 
 ## Crawl Constraints
 
@@ -54,12 +59,12 @@ The default request is `data/crawl-request.json`:
 
 ```json
 {
-  "stopCount": 5,
-  "requiredBeerTypes": ["ipa", "stout", "lager"],
-  "requireMeal": true,
+  "stopCount": 20,
+  "requiredBeerTypes": ["lager"],
+  "requireMeal": false,
   "minDistanceKm": 2,
-  "maxDistanceKm": 5,
-  "returnToHotel": false
+  "maxDistanceKm": 9,
+  "returnToHotel": true
 }
 ```
 
@@ -114,10 +119,16 @@ shape:
 The supplied beer, meal, and experimental attribute values are illustrative
 demo data, not guaranteed current venue information.
 
-## Optimizer Output
+## Solve Modes and Output
 
-`npm run optimize` writes `data/optimized-crawl.json`. It contains the selected
-pubs in visit order using the map's existing input format:
+| Command | MiniZinc goal | Default output |
+| --- | --- | --- |
+| `npm run satisfy` | First route satisfying every constraint | `data/satisfied-crawl.json` |
+| `npm run optimize` | Shortest route, with optimality proven | `data/optimized-crawl.json` |
+
+Both commands read `data/pub-candidates.json` and `data/crawl-request.json`.
+Their output contains the selected pubs in visit order using the map's existing
+input format:
 
 ```json
 [
@@ -129,8 +140,8 @@ pubs in visit order using the map's existing input format:
 ]
 ```
 
-The command also prints the ordered pub names and total distance. If the
-constraints cannot be satisfied, it exits with an error and preserves the last
+Both commands print the ordered pub names and total distance. If the constraints
+cannot be satisfied, the command exits with an error and preserves its last
 valid output file.
 
 ## Custom Files
@@ -148,7 +159,7 @@ npm run optimize -- \
 | --- | --- |
 | `--pubs` | `data/pub-candidates.json` |
 | `--constraints` | `data/crawl-request.json` |
-| `--out` | `data/optimized-crawl.json` |
+| `--out` | `data/optimized-crawl.json` or `data/satisfied-crawl.json`, depending on the command |
 
 View a custom output by passing it to the map:
 
@@ -170,15 +181,15 @@ arrays.
 
 The TypeScript adapter converts them into the `bool_attribute`,
 `number_attribute`, and `has_value` matrices declared in
-`optimizer/pub-crawl.mzn`. If an attribute is present, every candidate pub must
-provide it with the same type.
+`optimizer/pub-crawl-base.mzn`. If an attribute is present, every candidate pub
+must provide it with the same type.
 
 Keep new rules explicit and easy to demonstrate:
 
 1. Add the attribute to every candidate pub.
 2. Add a named option to the crawl request if the rule is configurable.
 3. Map the option and attribute column in `optimizer/optimize.ts`.
-4. Add the readable constraint to `optimizer/pub-crawl.mzn`.
+4. Add the readable constraint to `optimizer/pub-crawl-base.mzn`.
 5. Add feasible and impossible test cases.
 
 The adapter exposes attribute data but deliberately does not generate MiniZinc

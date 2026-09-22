@@ -43,7 +43,10 @@ type SolverResult = {
   distanceMetres: number;
 };
 
+type SolveMode = "optimize" | "satisfy";
+
 type CliOptions = {
+  mode: SolveMode;
   pubsFile: string;
   constraintsFile: string;
   outputFile: string;
@@ -55,6 +58,7 @@ const HOTEL = {
 };
 
 const DEFAULT_OPTIONS: CliOptions = {
+  mode: "optimize",
   pubsFile: "data/pub-candidates.json",
   constraintsFile: "data/crawl-request.json",
   outputFile: "data/optimized-crawl.json",
@@ -449,22 +453,37 @@ function runMiniZinc(modelFile: string, dataFile: string): SolverResult {
 
 function parseCliOptions(args: string[]): CliOptions {
   const options = { ...DEFAULT_OPTIONS };
-  const fields: Record<string, keyof CliOptions> = {
+  const fields: Record<string, "pubsFile" | "constraintsFile" | "outputFile"> = {
     "--pubs": "pubsFile",
     "--constraints": "constraintsFile",
     "--out": "outputFile",
   };
+  let outputWasProvided = false;
 
   for (let index = 0; index < args.length; index += 2) {
     const flag = args[index];
     const value = args[index + 1];
+
+    if (flag === "--mode" && (value === "optimize" || value === "satisfy")) {
+      options.mode = value;
+      continue;
+    }
+
     const field = fields[flag];
     if (field === undefined || value === undefined || value.startsWith("--")) {
       throw new Error(
-        "Usage: npm run optimize -- [--pubs <file>] [--constraints <file>] [--out <file>]",
+        "Usage: npm run <optimize|satisfy> -- [--pubs <file>] [--constraints <file>] [--out <file>]",
       );
     }
     options[field] = value;
+    outputWasProvided ||= field === "outputFile";
+  }
+
+  if (!outputWasProvided) {
+    options.outputFile =
+      options.mode === "optimize"
+        ? "data/optimized-crawl.json"
+        : "data/satisfied-crawl.json";
   }
 
   return options;
@@ -498,7 +517,11 @@ async function main(): Promise<void> {
     const dataFile = path.join(workingDirectory, "crawl.dzn");
     await writeFile(dataFile, createMiniZincData(pubs, request), "utf8");
 
-    const modelFile = fileURLToPath(new URL("pub-crawl.mzn", import.meta.url));
+    const modelName =
+      options.mode === "optimize"
+        ? "pub-crawl.mzn"
+        : "pub-crawl-satisfy.mzn";
+    const modelFile = fileURLToPath(new URL(modelName, import.meta.url));
     const result = runMiniZinc(modelFile, dataFile);
     const route = result.route.map((pubIndex) => pubs[pubIndex - 1]);
     if (route.some((pub) => pub === undefined)) {
@@ -512,7 +535,8 @@ async function main(): Promise<void> {
     }));
     await writeJsonAtomically(options.outputFile, mapPins);
 
-    console.log(`Optimized crawl: ${route.map((pub) => pub.name).join(" -> ")}`);
+    const resultLabel = options.mode === "optimize" ? "Optimal crawl" : "Valid crawl";
+    console.log(`${resultLabel}: ${route.map((pub) => pub.name).join(" -> ")}`);
     console.log(
       `Straight-line route estimate: ${(result.distanceMetres / 1000).toFixed(2)} km`,
     );
