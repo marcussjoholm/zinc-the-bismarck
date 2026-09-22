@@ -115,5 +115,212 @@
     "beerTypes": ["ipa", "stout", "sour"],
     "servesMeals": false,
     "attributes": { "hasDartboard": false, "coziness": 5, "vibe": "quiet" }
+  },
+  {
+    "id": "vaeskebalancen",
+    "name": "Væskebalancen",
+    "latitude": 55.6864751,
+    "longitude": 12.5584108,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "oelbaren",
+    "name": "Ølbaren",
+    "latitude": 55.6892753,
+    "longitude": 12.5578754,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "oelsnedkeren",
+    "name": "Ølsnedkeren",
+    "latitude": 55.6859267,
+    "longitude": 12.5523374,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "brus",
+    "name": "BRUS",
+    "latitude": 55.6918656,
+    "longitude": 12.5557824,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "koelsters-tolv-haner",
+    "name": "Kølsters Tolv Haner",
+    "latitude": 55.6876336,
+    "longitude": 12.5470224,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "people-like-us",
+    "name": "People Like Us Beer Bar",
+    "latitude": 55.698261,
+    "longitude": 12.552981,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "noerrebro-bryghus",
+    "name": "Nørrebro Bryghus",
+    "latitude": 55.6902048,
+    "longitude": 12.5638481,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "mikkeller-friends",
+    "name": "Mikkeller & Friends",
+    "latitude": 55.6946446,
+    "longitude": 12.5432229,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "koelschip",
+    "name": "Koelschip",
+    "latitude": 55.6946446,
+    "longitude": 12.5434729,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "dispensary",
+    "name": "Dispensary",
+    "latitude": 55.6972572,
+    "longitude": 12.544631,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "skaal",
+    "name": "SKAAL",
+    "latitude": 55.682326,
+    "longitude": 12.573648,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "amager-bryghus-taproom",
+    "name": "Amager Bryghus Taproom",
+    "latitude": 55.6843528,
+    "longitude": 12.5728215,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "oelhaven",
+    "name": "Ølhaven",
+    "latitude": 55.6821013,
+    "longitude": 12.5851463,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "black-swan",
+    "name": "Black Swan",
+    "latitude": 55.6864894,
+    "longitude": 12.5874331,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "alefarm-taproom",
+    "name": "Alefarm Taproom",
+    "latitude": 55.687207,
+    "longitude": 12.562081,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "soeernes-oelbar",
+    "name": "Søernes Ølbar",
+    "latitude": 55.6962633,
+    "longitude": 12.5750656,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "bicycle-brewing",
+    "name": "Bicycle Brewing",
+    "latitude": 55.7055585,
+    "longitude": 12.5793537,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "soehesten",
+    "name": "Søhesten",
+    "latitude": 55.6903189,
+    "longitude": 12.5720729,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "retroarkaden",
+    "name": "Retroarkaden",
+    "latitude": 55.690397,
+    "longitude": 12.573306,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "gamma-nv",
+    "name": "Gamma NV",
+    "latitude": 55.7009959,
+    "longitude": 12.534039,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "flying-couch",
+    "name": "Flying Couch Brewery & Taproom",
+    "latitude": 55.705701,
+    "longitude": 12.534661,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "christiania-bryghus-lab",
+    "name": "Christiania Bryghus - The Lab",
+    "latitude": 55.673824,
+    "longitude": 12.600609,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
+  },
+  {
+    "id": "mikkeller-baghaven",
+    "name": "Mikkeller Baghaven",
+    "latitude": 55.6934851,
+    "longitude": 12.6078635,
+    "beerTypes": ["lager"],
+    "servesMeals": false,
+    "attributes": { "hasDartboard": false, "coziness": 3, "vibe": "unknown" }
   }
 ]
