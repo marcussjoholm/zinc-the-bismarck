@@ -25,46 +25,13 @@ type HotelPin = PubPin & {
   address: string;
 };
 
-// Venues are kept in the same order as the guide.
-const pubCrawlPins: PubPin[] = [
-  { name: "Jernbanecafeen", latitude: 55.6721637, longitude: 12.5636709 },
-  { name: "Mikkeller Bar Viktoriagade", latitude: 55.6719575, longitude: 12.5575483 },
-  { name: "Dialekt Beer Bar", latitude: 55.672482, longitude: 12.557516 },
-  { name: "Fermentoren", latitude: 55.6679147, longitude: 12.5563801 },
-  { name: "Warpigs Brewpub", latitude: 55.6685278, longitude: 12.5599599 },
-  { name: "ÅBEN Kødbyen", latitude: 55.6682632, longitude: 12.5615533 },
-  { name: "Bootleggers Vesterbro", latitude: 55.6681772, longitude: 12.5494792 },
-  { name: "KIHOSKH", latitude: 55.6664138, longitude: 12.5529649 },
-  { name: "Væskebalancen", latitude: 55.6864751, longitude: 12.5584108 },
-  { name: "Ølbaren", latitude: 55.6892753, longitude: 12.5578754 },
-  { name: "Ølsnedkeren", latitude: 55.6859267, longitude: 12.5523374 },
-  { name: "BRUS", latitude: 55.6918656, longitude: 12.5557824 },
-  { name: "Kølsters Tolv Haner", latitude: 55.6876336, longitude: 12.5470224 },
-  { name: "People Like Us Beer Bar", latitude: 55.698261, longitude: 12.552981 },
-  { name: "Nørrebro Bryghus", latitude: 55.6902048, longitude: 12.5638481 },
-  { name: "Mikkeller & Friends", latitude: 55.6946446, longitude: 12.5432229 },
-  // Koelschip shares the same address; the tiny offset keeps both pins visible.
-  { name: "Koelschip", latitude: 55.6946446, longitude: 12.5434729 },
-  { name: "Dispensary", latitude: 55.6972572, longitude: 12.544631 },
-  { name: "Taphouse", latitude: 55.676199, longitude: 12.571519 },
-  { name: "SKAAL", latitude: 55.682326, longitude: 12.573648 },
-  { name: "Peders", latitude: 55.679073, longitude: 12.568998 },
-  { name: "Godt Øl", latitude: 55.6768192, longitude: 12.5760433 },
-  { name: "Amager Bryghus Taproom", latitude: 55.6843528, longitude: 12.5728215 },
-  { name: "Ørsted Ølbar", latitude: 55.6812668, longitude: 12.5645148 },
-  { name: "Ølhaven", latitude: 55.6821013, longitude: 12.5851463 },
-  { name: "Black Swan", latitude: 55.6864894, longitude: 12.5874331 },
-  { name: "BrewPub Copenhagen", latitude: 55.677163, longitude: 12.569487 },
-  { name: "Alefarm Taproom", latitude: 55.687207, longitude: 12.562081 },
-  { name: "Søernes Ølbar", latitude: 55.6962633, longitude: 12.5750656 },
-  { name: "Bicycle Brewing", latitude: 55.7055585, longitude: 12.5793537 },
-  { name: "Søhesten", latitude: 55.6903189, longitude: 12.5720729 },
-  { name: "Retroarkaden", latitude: 55.690397, longitude: 12.573306 },
-  { name: "Gamma NV", latitude: 55.7009959, longitude: 12.534039 },
-  { name: "Flying Couch Brewery & Taproom", latitude: 55.705701, longitude: 12.534661 },
-  { name: "Christiania Bryghus - The Lab", latitude: 55.673824, longitude: 12.600609 },
-  { name: "Mikkeller Baghaven", latitude: 55.6934851, longitude: 12.6078635 },
-];
+const DEFAULT_DATA_FILE = "data/pubs.json";
+
+let pubCrawlPins: PubPin[] = [];
+let map: any;
+let hotelMarker: any;
+let markers: any[] = [];
+let markerPositions: Array<[number, number]> = [];
 
 const hotel: HotelPin = {
   name: "Imperial Hotel",
@@ -73,31 +40,111 @@ const hotel: HotelPin = {
   longitude: 12.5617,
 };
 
-const pinBounds = L.latLngBounds([
-  ...pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
-  [hotel.latitude, hotel.longitude],
-]);
+void initialize();
 
-const map = L.map("map", {
-  maxBounds: pinBounds.pad(0.2),
-  maxBoundsViscosity: 1,
-  zoomControl: true,
-}).fitBounds(pinBounds, { padding: [52, 52] });
+async function initialize(): Promise<void> {
+  try {
+    pubCrawlPins = await loadPubPins();
+    initializeMap();
+  } catch (error) {
+    console.error(error);
+    const routeSummary = getElement("route-summary");
+    routeSummary.setAttribute("role", "alert");
+    routeSummary.textContent =
+      error instanceof Error ? error.message : "Could not load pub data.";
+  }
+}
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "&copy; OpenStreetMap contributors",
-  maxZoom: 19,
-}).addTo(map);
+async function loadPubPins(): Promise<PubPin[]> {
+  const requestedFiles = new URLSearchParams(window.location.search)
+    .getAll("data")
+    .map((file) => file.trim())
+    .filter(Boolean);
+  const files = requestedFiles.length > 0 ? requestedFiles : [DEFAULT_DATA_FILE];
+  const pinGroups = await Promise.all(files.map(loadPinFile));
+  const pins = pinGroups.flat();
 
-map.setMinZoom(map.getZoom());
+  if (pins.length === 0) {
+    throw new Error("The selected JSON files do not contain any pub pins.");
+  }
 
-const hotelMarker = createHotelMarker(hotel);
-const markerPositions: Array<[number, number]> = pubCrawlPins.map((pin) => [
-  pin.latitude,
-  pin.longitude,
-]);
+  return pins;
+}
 
-const markers = pubCrawlPins.map((pin, index) => {
+async function loadPinFile(file: string): Promise<PubPin[]> {
+  const response = await fetch(file);
+
+  if (!response.ok) {
+    throw new Error(`Could not load ${file} (${response.status}).`);
+  }
+
+  const value: unknown = await response.json();
+
+  if (!Array.isArray(value)) {
+    throw new Error(`${file} must contain a JSON array.`);
+  }
+
+  return value.map((pin, index) => parsePubPin(pin, file, index));
+}
+
+function parsePubPin(value: unknown, file: string, index: number): PubPin {
+  if (
+    !isRecord(value) ||
+    typeof value.name !== "string" ||
+    value.name.trim() === "" ||
+    typeof value.latitude !== "number" ||
+    !Number.isFinite(value.latitude) ||
+    typeof value.longitude !== "number" ||
+    !Number.isFinite(value.longitude)
+  ) {
+    throw new Error(
+      `${file}: item ${index + 1} must have a name, latitude and longitude.`,
+    );
+  }
+
+  return {
+    name: value.name.trim(),
+    latitude: value.latitude,
+    longitude: value.longitude,
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function initializeMap(): void {
+  const pinBounds = L.latLngBounds([
+    ...pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
+    [hotel.latitude, hotel.longitude],
+  ]);
+
+  map = L.map("map", {
+    maxBounds: pinBounds.pad(0.2),
+    maxBoundsViscosity: 1,
+    zoomControl: true,
+  }).fitBounds(pinBounds, { padding: [52, 52] });
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+    maxZoom: 19,
+  }).addTo(map);
+
+  map.setMinZoom(map.getZoom());
+  hotelMarker = createHotelMarker(hotel);
+  markerPositions = pubCrawlPins.map((pin) => [
+    pin.latitude,
+    pin.longitude,
+  ]);
+  markers = pubCrawlPins.map(createPubMarker);
+
+  void drawAnimatedRoute();
+  renderStopList();
+  renderRouteSummary();
+  renderHotel();
+}
+
+function createPubMarker(pin: PubPin, index: number): any {
   const marker = L.marker(markerPositions[index], {
     icon: L.divIcon({
       className: "pub-marker",
@@ -129,13 +176,7 @@ const markers = pubCrawlPins.map((pin, index) => {
   });
 
   return marker;
-});
-
-void drawAnimatedRoute();
-
-renderStopList();
-renderRouteSummary();
-renderHotel();
+}
 
 function drawAnimatedRoute(): void {
   if (pubCrawlPins.length < 2) {
