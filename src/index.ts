@@ -172,7 +172,7 @@ function drawAnimatedRoute(): void {
       { strokeDashoffset: "0" },
     ],
     {
-      duration: 8400,
+      duration: length / 2,
       easing: "linear",
       fill: "forwards",
     },
