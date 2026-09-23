@@ -522,6 +522,7 @@ async function main(): Promise<void> {
         ? "pub-crawl.mzn"
         : "pub-crawl-satisfy.mzn";
     const modelFile = fileURLToPath(new URL(modelName, import.meta.url));
+    console.time('MiniZinc solver time');
     const result = runMiniZinc(modelFile, dataFile);
     const route = result.route.map((pubIndex) => pubs[pubIndex - 1]);
     if (route.some((pub) => pub === undefined)) {
@@ -541,6 +542,7 @@ async function main(): Promise<void> {
       `Straight-line route estimate: ${(result.distanceMetres / 1000).toFixed(2)} km`,
     );
     console.log(`Wrote ${options.outputFile}`);
+    console.timeEnd('MiniZinc solver time');
   } finally {
     await rm(workingDirectory, { recursive: true, force: true });
   }
