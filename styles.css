@@ -72,9 +72,47 @@ h1 {
 
 .route-summary {
   min-height: 20px;
-  margin: 12px 0 20px;
+  margin: 12px 0 14px;
   color: var(--subtext-0);
   font-size: 14px;
+}
+
+.route-mode {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 20px;
+  padding: 3px;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
+  border-radius: 8px;
+}
+
+.route-mode a {
+  display: grid;
+  min-height: 34px;
+  padding: 7px 9px;
+  color: var(--subtext-1);
+  font-size: 13px;
+  font-weight: 650;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  place-items: center;
+}
+
+.route-mode a:hover {
+  color: var(--text);
+  background: var(--surface-1);
+}
+
+.route-mode a[aria-current="page"] {
+  color: var(--crust);
+  background: var(--blue);
+}
+
+.route-mode a:focus-visible {
+  outline: 3px solid rgb(137 180 250 / 45%);
+  outline-offset: 2px;
 }
 
 .hotel-button {

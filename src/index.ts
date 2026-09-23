@@ -26,6 +26,8 @@ type HotelPin = PubPin & {
 };
 
 const DEFAULT_DATA_FILE = "data/pubs.json";
+const OPTIMIZED_DATA_FILE = "data/optimized-crawl.json";
+const SATISFIED_DATA_FILE = "data/satisfied-crawl.json";
 
 let pubCrawlPins: PubPin[] = [];
 let map: any;
@@ -43,6 +45,8 @@ const hotel: HotelPin = {
 void initialize();
 
 async function initialize(): Promise<void> {
+  renderRouteMode();
+
   try {
     pubCrawlPins = await loadPubPins();
     initializeMap();
@@ -56,10 +60,7 @@ async function initialize(): Promise<void> {
 }
 
 async function loadPubPins(): Promise<PubPin[]> {
-  const requestedFiles = new URLSearchParams(window.location.search)
-    .getAll("data")
-    .map((file) => file.trim())
-    .filter(Boolean);
+  const requestedFiles = getRequestedDataFiles();
   const files = requestedFiles.length > 0 ? requestedFiles : [DEFAULT_DATA_FILE];
   const pinGroups = await Promise.all(files.map(loadPinFile));
   const pins = pinGroups.flat();
@@ -69,6 +70,32 @@ async function loadPubPins(): Promise<PubPin[]> {
   }
 
   return pins;
+}
+
+function getRequestedDataFiles(): string[] {
+  return new URLSearchParams(window.location.search)
+    .getAll("data")
+    .map((file) => file.trim())
+    .filter(Boolean);
+}
+
+function renderRouteMode(): void {
+  const requestedFiles = getRequestedDataFiles();
+  const activeFile = requestedFiles.length === 1 ? requestedFiles[0] : undefined;
+  const routeLinks = [
+    { id: "default-route-link", active: requestedFiles.length === 0 },
+    { id: "optimized-route-link", active: activeFile === OPTIMIZED_DATA_FILE },
+    { id: "satisfied-route-link", active: activeFile === SATISFIED_DATA_FILE },
+  ];
+
+  for (const { id, active } of routeLinks) {
+    const link = getElement<HTMLAnchorElement>(id);
+    if (active) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  }
 }
 
 async function loadPinFile(file: string): Promise<PubPin[]> {

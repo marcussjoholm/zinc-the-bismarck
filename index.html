@@ -9,7 +9,7 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
-    <link rel="stylesheet" href="styles.css?v=1" />
+    <link rel="stylesheet" href="styles.css?v=3" />
     <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="/src/index.ts"></script>
   </head>
@@ -20,6 +20,22 @@
           <p class="location">Centrala Köpenhamn</p>
           <h1>Pubrunda</h1>
           <p id="route-summary" class="route-summary"></p>
+          <nav class="route-mode" aria-label="Välj typ av pubrunda">
+            <a
+              id="default-route-link"
+              href="./"
+              aria-label="Visa alla stopp"
+            >Alla</a>
+            <a
+              id="optimized-route-link"
+              href="?data=data/optimized-crawl.json"
+            >Optimal</a>
+            <a
+              id="satisfied-route-link"
+              href="?data=data/satisfied-crawl.json"
+              aria-label="Visa första adekvata pubrundan"
+            >Adekvat</a>
+          </nav>
         </header>
 
         <button id="hotel-button" class="hotel-button" type="button">
