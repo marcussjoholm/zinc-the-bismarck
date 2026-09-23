@@ -3,6 +3,5 @@
   "requiredBeerTypes": ["ipa", "stout", "lager"],
   "requireMeal": true,
   "minDistanceKm": 0,
-  "maxDistanceKm": 0.1,
-  "returnToHotel": false
+  "maxDistanceKm": 0.1
 }

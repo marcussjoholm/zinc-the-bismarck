@@ -152,8 +152,7 @@ Create `data/crawl-request.json`:
   "requiredBeerTypes": ["ipa", "stout"],
   "requireMeal": true,
   "minDistanceKm": 2,
-  "maxDistanceKm": 5,
-  "returnToHotel": false
+  "maxDistanceKm": 5
 }
 ```
 
@@ -166,7 +165,6 @@ Constraints for the first version:
 | `requireMeal` | boolean | At least one selected pub must serve meals |
 | `minDistanceKm` | optional non-negative number | Minimum total route distance |
 | `maxDistanceKm` | optional positive number | Maximum total route distance |
-| `returnToHotel` | boolean | Include the final pub-to-hotel leg in the objective |
 
 Either distance bound may be omitted. When both are supplied,
 `minDistanceKm` must not exceed `maxDistanceKm`. The example asks for a route
@@ -265,14 +263,14 @@ Add these constraints:
 The objective is:
 
 ```text
-hotel -> route[1] -> route[2] -> ... -> route[stopCount]
+hotel -> route[1] -> route[2] -> ... -> route[stopCount] -> hotel
 ```
 
-plus the final leg back to the hotel only when `returnToHotel` is true. This
-same total is used for the minimum-distance constraint, maximum-distance
-constraint, displayed result, and optimization objective. Minimize the sum of
-those integer distances after applying the bounds. With the example request,
-the solver therefore finds the shortest valid route in the 2-5 km range.
+The route always returns to the hotel. This same round-trip total is used for
+the minimum-distance constraint, maximum-distance constraint, displayed result,
+and optimization objective. Minimize the sum of those integer distances after
+applying the bounds. With the example request, the solver therefore finds the
+shortest valid route in the 2-5 km range.
 
 This lets MiniZinc choose both **which** pubs to visit and **their order**. It is
 small enough to explain on one slide and still demonstrates constraint
@@ -362,8 +360,7 @@ Optional CLI arguments should stay limited to:
 
 - Implement route selection, uniqueness, beer coverage, and meal constraints.
 - Apply optional minimum and maximum total route distances.
-- Minimize total distance from the hotel through the ordered pubs.
-- Support the optional return-to-hotel leg.
+- Minimize total distance from the hotel through the ordered pubs and back.
 - Emit a parseable route and objective value.
 
 ### 4. Viewer Integration
@@ -400,7 +397,8 @@ Optional CLI arguments should stay limited to:
 - A meal-serving pub is included when requested.
 - The calculated total route distance respects optional minimum and maximum
   bounds.
-- Gecode minimizes the straight-line route distance from the Imperial Hotel.
+- Gecode minimizes the round-trip straight-line route distance from the
+  Imperial Hotel and back.
 - Impossible constraints produce a clear error and preserve the previous route.
 - The existing map loads and displays the generated route without code changes
   or manual JSON reshaping.

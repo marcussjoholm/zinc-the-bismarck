@@ -64,7 +64,6 @@ test("validates the crawl request and distance bounds", () => {
       requireMeal: true,
       minDistanceKm: 2,
       maxDistanceKm: 5,
-      returnToHotel: false,
     },
     pubs,
   );
@@ -82,7 +81,6 @@ test("rejects impossible input-level requirements", () => {
           stopCount: 3,
           requiredBeerTypes: ["sour"],
           requireMeal: false,
-          returnToHotel: false,
         },
         pubs,
       ),

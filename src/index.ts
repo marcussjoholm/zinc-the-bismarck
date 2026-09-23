@@ -219,7 +219,11 @@ function drawAnimatedRoute(): void {
   };
 
   const route = L.polyline(
-    [[hotel.latitude, hotel.longitude], ...markerPositions],
+    [
+      [hotel.latitude, hotel.longitude],
+      ...markerPositions,
+      [hotel.latitude, hotel.longitude],
+    ],
     routeStyle,
   ).addTo(map);
 
@@ -347,13 +351,17 @@ function renderStopList(): void {
 }
 
 function renderRouteSummary(): void {
-  const totalDistance = pubCrawlPins.reduce((distance, pin, index) => {
+  const outboundDistance = pubCrawlPins.reduce((distance, pin, index) => {
     const previousStop = index === 0 ? hotel : pubCrawlPins[index - 1];
     return distance + distanceInKilometres(previousStop, pin);
   }, 0);
+  const lastStop = pubCrawlPins[pubCrawlPins.length - 1];
+  const totalDistance =
+    outboundDistance +
+    (lastStop === undefined ? 0 : distanceInKilometres(lastStop, hotel));
 
   const stopText = `${pubCrawlPins.length} ${pubCrawlPins.length === 1 ? "stopp" : "stopp"}`;
-  const distanceText = `${totalDistance.toFixed(1)} km fågelvägsestimat`;
+  const distanceText = `${totalDistance.toFixed(1)} km fågelvägen`;
   getElement("route-summary").textContent = `${stopText} / ${distanceText}`;
 }
 

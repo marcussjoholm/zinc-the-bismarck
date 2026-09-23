@@ -22,7 +22,6 @@ export type CrawlRequest = {
   requireMeal: boolean;
   minDistanceKm?: number;
   maxDistanceKm?: number;
-  returnToHotel: boolean;
 };
 
 type MapPin = Pick<CandidatePub, "name" | "latitude" | "longitude">;
@@ -95,7 +94,6 @@ export function parseCrawlRequest(value: unknown, pubs: CandidatePub[]): CrawlRe
     "requireMeal",
     "minDistanceKm",
     "maxDistanceKm",
-    "returnToHotel",
   ]);
 
   for (const field of Object.keys(value)) {
@@ -145,7 +143,6 @@ export function parseCrawlRequest(value: unknown, pubs: CandidatePub[]): CrawlRe
     requireMeal: requireBoolean(value.requireMeal, "requireMeal"),
     ...(minDistanceKm === undefined ? {} : { minDistanceKm }),
     ...(maxDistanceKm === undefined ? {} : { maxDistanceKm }),
-    returnToHotel: requireBoolean(value.returnToHotel, "returnToHotel"),
   };
 }
 
@@ -345,7 +342,6 @@ function createMiniZincData(pubs: CandidatePub[], request: CrawlRequest): string
     `value_count = ${attributes.valueNames.length};`,
     `has_value = ${matrixLiteral(attributes.values)};`,
     `require_meal = ${request.requireMeal};`,
-    `return_to_hotel = ${request.returnToHotel};`,
     `min_distance_m = ${Math.round((request.minDistanceKm ?? 0) * 1000)};`,
     `max_distance_m = ${Math.round(
       (request.maxDistanceKm ?? MAX_DISTANCE_METRES / 1000) * 1000,

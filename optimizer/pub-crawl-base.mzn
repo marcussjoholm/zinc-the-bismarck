@@ -29,7 +29,6 @@ set of int: VALUES = 1..value_count;
 array[PUBS, VALUES] of bool: has_value;
 
 bool: require_meal;
-bool: return_to_hotel;
 int: min_distance_m;
 int: max_distance_m;
 
@@ -51,7 +50,7 @@ var int: route_distance_m =
   sum(stop in 1..stop_count - 1) (
     distance_m[route[stop], route[stop + 1]]
   ) +
-  if return_to_hotel then distance_m[route[stop_count], 0] else 0 endif;
+  distance_m[route[stop_count], 0];
 
 constraint route_distance_m >= min_distance_m;
 constraint route_distance_m <= max_distance_m;
