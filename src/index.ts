@@ -30,6 +30,7 @@ const OPTIMIZED_DATA_FILE = "data/optimized-crawl.json";
 const SATISFIED_DATA_FILE = "data/satisfied-crawl.json";
 
 let pubCrawlPins: PubPin[] = [];
+let unusedPubPins: PubPin[] = [];
 let map: any;
 let hotelMarker: any;
 let markers: any[] = [];
@@ -49,6 +50,7 @@ async function initialize(): Promise<void> {
 
   try {
     pubCrawlPins = await loadPubPins();
+    unusedPubPins = await loadUnusedPubPins(pubCrawlPins);
     initializeMap();
   } catch (error) {
     console.error(error);
@@ -57,6 +59,28 @@ async function initialize(): Promise<void> {
     routeSummary.textContent =
       error instanceof Error ? error.message : "Could not load pub data.";
   }
+}
+
+async function loadUnusedPubPins(selectedPins: PubPin[]): Promise<PubPin[]> {
+  if (!isSolutionView()) {
+    return [];
+  }
+
+  const allPins = await loadPinFile(DEFAULT_DATA_FILE);
+  const selectedPinKeys = new Set(selectedPins.map(pinKey));
+  return allPins.filter((pin) => !selectedPinKeys.has(pinKey(pin)));
+}
+
+function isSolutionView(): boolean {
+  const requestedFiles = getRequestedDataFiles();
+  return (
+    requestedFiles.length === 1 &&
+    [OPTIMIZED_DATA_FILE, SATISFIED_DATA_FILE].includes(requestedFiles[0])
+  );
+}
+
+function pinKey(pin: PubPin): string {
+  return `${pin.name}\u0000${pin.latitude}\u0000${pin.longitude}`;
 }
 
 async function loadPubPins(): Promise<PubPin[]> {
@@ -143,6 +167,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function initializeMap(): void {
   const pinBounds = L.latLngBounds([
     ...pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
+    ...unusedPubPins.map((pin) => [pin.latitude, pin.longitude]),
     [hotel.latitude, hotel.longitude],
   ]);
 
@@ -159,6 +184,7 @@ function initializeMap(): void {
 
   map.setMinZoom(map.getZoom());
   hotelMarker = createHotelMarker(hotel);
+  unusedPubPins.forEach(createUnusedPubMarker);
   markerPositions = pubCrawlPins.map((pin) => [
     pin.latitude,
     pin.longitude,
@@ -180,13 +206,14 @@ function createPubMarker(pin: PubPin, index: number): any {
       iconSize: [36, 36],
     }),
     title: pin.name,
+    zIndexOffset: 500,
   }).addTo(map);
 
   const popup = document.createElement("div");
   popup.className = "pub-popup";
 
   const popupNumber = document.createElement("span");
-  popupNumber.textContent = `Stop ${index + 1}`;
+  popupNumber.textContent = `Stopp ${index + 1}`;
 
   const popupName = document.createElement("strong");
   popupName.textContent = pin.name;
@@ -200,6 +227,39 @@ function createPubMarker(pin: PubPin, index: number): any {
     className: "pub-label",
     direction: "right",
     offset: [12, 0],
+  });
+
+  return marker;
+}
+
+function createUnusedPubMarker(pin: PubPin): any {
+  const marker = L.circleMarker([pin.latitude, pin.longitude], {
+    color: "#181825",
+    fillColor: "#7f849c",
+    fillOpacity: 0.9,
+    opacity: 0.95,
+    radius: 7,
+    weight: 2,
+  }).addTo(map);
+
+  const popup = document.createElement("div");
+  popup.className = "pub-popup";
+
+  const popupType = document.createElement("span");
+  popupType.textContent = "Ej med i rutten";
+
+  const popupName = document.createElement("strong");
+  popupName.textContent = pin.name;
+
+  popup.append(popupType, popupName);
+  marker.bindPopup(popup);
+
+  const label = document.createElement("span");
+  label.textContent = pin.name;
+  marker.bindTooltip(label, {
+    className: "pub-label unused-pub-label",
+    direction: "right",
+    offset: [8, 0],
   });
 
   return marker;
@@ -290,7 +350,7 @@ function createHotelMarker(pin: HotelPin): any {
   popup.className = "hotel-popup";
 
   const popupType = document.createElement("span");
-  popupType.textContent = "Our hotel";
+  popupType.textContent = "Vårt hotel";
 
   const popupName = document.createElement("strong");
   popupName.textContent = pin.name;

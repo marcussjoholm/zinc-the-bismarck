@@ -344,6 +344,12 @@ h1 {
   border-right-color: rgb(49 50 68 / 96%);
 }
 
+.leaflet-tooltip.unused-pub-label {
+  color: var(--subtext-0);
+  font-weight: 600;
+  background: rgb(49 50 68 / 90%);
+}
+
 .pub-popup {
   display: grid;
   gap: 2px;
