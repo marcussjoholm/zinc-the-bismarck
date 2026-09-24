@@ -165,17 +165,21 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function initializeMap(): void {
-  const pinBounds = L.latLngBounds([
+  const allPinBounds = L.latLngBounds([
     ...pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
     ...unusedPubPins.map((pin) => [pin.latitude, pin.longitude]),
     [hotel.latitude, hotel.longitude],
   ]);
+  const routeBounds = L.latLngBounds([
+    ...pubCrawlPins.map((pin) => [pin.latitude, pin.longitude]),
+    [hotel.latitude, hotel.longitude],
+  ]);
 
   map = L.map("map", {
-    maxBounds: pinBounds.pad(0.2),
+    maxBounds: allPinBounds.pad(0.2),
     maxBoundsViscosity: 1,
     zoomControl: true,
-  }).fitBounds(pinBounds, { padding: [52, 52] });
+  }).fitBounds(allPinBounds, { padding: [52, 52] });
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors",
@@ -183,6 +187,9 @@ function initializeMap(): void {
   }).addTo(map);
 
   map.setMinZoom(map.getZoom());
+  if (isSolutionView()) {
+    map.fitBounds(routeBounds, { animate: false, padding: [40, 40] });
+  }
   hotelMarker = createHotelMarker(hotel);
   unusedPubPins.forEach(createUnusedPubMarker);
   markerPositions = pubCrawlPins.map((pin) => [
@@ -275,6 +282,7 @@ function drawAnimatedRoute(): void {
     color: "#f38ba8",
     interactive: false,
     lineCap: "round",
+    noClip: true,
     opacity: 0.9,
     weight: 4,
   };
