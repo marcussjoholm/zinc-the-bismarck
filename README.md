@@ -145,9 +145,14 @@ input format:
 ]
 ```
 
-Both commands print the ordered pub names and total distance. If the constraints
-cannot be satisfied, the command exits with an error and preserves its last
-valid output file.
+Both commands print the ordered pub names, total distance, and Gecode search
+statistics. These include solver time, search nodes, failures/backtracks,
+constraint propagations, peak search depth, restarts, solutions found, and the
+flattened solver model size. The final `MiniZinc solver time` line also includes
+MiniZinc startup, model compilation, and local file handling.
+
+If the constraints cannot be satisfied, the command exits with an error and
+preserves its last valid output file.
 
 ## Custom Files
 

@@ -6,6 +6,7 @@ import {
   calculateDistanceMetres,
   parseCandidatePubs,
   parseCrawlRequest,
+  parseSolverOutput,
   type CandidatePub,
 } from "./optimize.js";
 
@@ -118,4 +119,28 @@ test("rejects a required dartboard when no candidate has one", () => {
 test("parses candidate JSON and rejects duplicate ids", () => {
   assert.equal(parseCandidatePubs(pubs).length, 2);
   assert.throws(() => parseCandidatePubs([pubs[0], pubs[0]]), /Duplicate pub id/);
+});
+
+test("parses MiniZinc statistics from the JSON event stream", () => {
+  const result = parseSolverOutput(
+    [
+      JSON.stringify({
+        type: "solution",
+        output: { default: '{"route":[1,2],"distanceMetres":1234}' },
+      }),
+      JSON.stringify({
+        type: "statistics",
+        statistics: { solveTime: 0.125, nodes: 42, failures: 7 },
+      }),
+      JSON.stringify({ type: "status", status: "SATISFIED" }),
+    ].join("\n"),
+  );
+
+  assert.deepEqual(result.route, [1, 2]);
+  assert.equal(result.solutionEvents, 1);
+  assert.deepEqual(result.statistics, {
+    solveTime: 0.125,
+    nodes: 42,
+    failures: 7,
+  });
 });

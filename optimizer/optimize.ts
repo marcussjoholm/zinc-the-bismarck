@@ -42,6 +42,8 @@ type AttributeMatrices = {
 type SolverResult = {
   route: number[];
   distanceMetres: number;
+  solutionEvents: number;
+  statistics: Record<string, number>;
 };
 
 type SolveMode = "optimize" | "satisfy";
@@ -405,9 +407,11 @@ function indexComment(names: string[]): string {
     : names.map((name, index) => `${index + 1}=${name}`).join(", ");
 }
 
-function parseSolverOutput(stdout: string): SolverResult {
+export function parseSolverOutput(stdout: string): SolverResult {
   let solutionText: string | undefined;
   let status: string | undefined;
+  let solutionEvents = 0;
+  const statistics: Record<string, number> = {};
 
   for (const line of stdout.split("\n").map((item) => item.trim()).filter(Boolean)) {
     let event: unknown;
@@ -421,6 +425,7 @@ function parseSolverOutput(stdout: string): SolverResult {
       continue;
     }
     if (event.type === "solution" && isRecord(event.output)) {
+      solutionEvents += 1;
       const output = event.output.default;
       if (typeof output === "string") {
         solutionText = output;
@@ -428,6 +433,13 @@ function parseSolverOutput(stdout: string): SolverResult {
     }
     if (event.type === "status" && typeof event.status === "string") {
       status = event.status;
+    }
+    if (event.type === "statistics" && isRecord(event.statistics)) {
+      for (const [name, statistic] of Object.entries(event.statistics)) {
+        if (typeof statistic === "number" && Number.isFinite(statistic)) {
+          statistics[name] = statistic;
+        }
+      }
     }
   }
 
@@ -451,13 +463,15 @@ function parseSolverOutput(stdout: string): SolverResult {
   return {
     route: value.route as number[],
     distanceMetres: value.distanceMetres,
+    solutionEvents,
+    statistics,
   };
 }
 
 function runMiniZinc(modelFile: string, dataFile: string): SolverResult {
   const result = spawnSync(
     "minizinc",
-    ["--solver", "gecode", "--json-stream", modelFile, dataFile],
+    ["--solver", "gecode", "--json-stream", "--statistics", modelFile, dataFile],
     { encoding: "utf8" },
   );
 
@@ -479,6 +493,40 @@ function runMiniZinc(modelFile: string, dataFile: string): SolverResult {
     }
     throw error;
   }
+}
+
+function printSolverStatistics(result: SolverResult): void {
+  const statistics = result.statistics;
+  const rows: Array<[string, string | undefined]> = [
+    ["Solve time", formatSeconds(statistics.solveTime)],
+    ["Search nodes", formatCount(statistics.nodes)],
+    ["Failures / backtracks", formatCount(statistics.failures)],
+    ["Constraint propagations", formatCount(statistics.propagations)],
+    ["Peak search depth", formatCount(statistics.peakDepth)],
+    ["Restarts", formatCount(statistics.restarts)],
+    [
+      "Solutions found",
+      formatCount(statistics.solutions ?? result.solutionEvents),
+    ],
+    ["Solver variables", formatCount(statistics.variables)],
+    ["Solver propagators", formatCount(statistics.propagators)],
+  ].filter((row): row is [string, string] => row[1] !== undefined);
+
+  console.log("\nSolver statistics:");
+  for (const [label, value] of rows) {
+    console.log(`  ${label.padEnd(24)} ${value}`);
+  }
+}
+
+function formatSeconds(value: number | undefined): string | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  return value < 1 ? `${(value * 1000).toFixed(1)} ms` : `${value.toFixed(3)} s`;
+}
+
+function formatCount(value: number | undefined): string | undefined {
+  return value === undefined ? undefined : value.toLocaleString("en-US");
 }
 
 function parseCliOptions(args: string[]): CliOptions {
@@ -571,6 +619,7 @@ async function main(): Promise<void> {
     console.log(
       `Straight-line route estimate: ${(result.distanceMetres / 1000).toFixed(2)} km`,
     );
+    printSolverStatistics(result);
     console.log(`Wrote ${options.outputFile}`);
     console.timeEnd('MiniZinc solver time');
   } finally {
