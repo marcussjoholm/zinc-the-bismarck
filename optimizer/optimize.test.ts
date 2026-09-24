@@ -62,6 +62,7 @@ test("validates the crawl request and distance bounds", () => {
       stopCount: 2,
       requiredBeerTypes: ["ipa", "stout"],
       requireMeal: true,
+      requireDartboard: true,
       minDistanceKm: 2,
       maxDistanceKm: 5,
       minPubDistanceKm: 0.2,
@@ -70,6 +71,7 @@ test("validates the crawl request and distance bounds", () => {
   );
 
   assert.equal(request.stopCount, 2);
+  assert.equal(request.requireDartboard, true);
   assert.equal(request.minDistanceKm, 2);
   assert.equal(request.maxDistanceKm, 5);
   assert.equal(request.minPubDistanceKm, 0.2);
@@ -87,6 +89,29 @@ test("rejects impossible input-level requirements", () => {
         pubs,
       ),
     /stopCount cannot exceed/,
+  );
+});
+
+test("rejects a required dartboard when no candidate has one", () => {
+  const noDartboards = structuredClone(pubs);
+  noDartboards.forEach((pub) => {
+    if (pub.attributes) {
+      pub.attributes.hasDartboard = false;
+    }
+  });
+
+  assert.throws(
+    () =>
+      parseCrawlRequest(
+        {
+          stopCount: 2,
+          requiredBeerTypes: [],
+          requireMeal: false,
+          requireDartboard: true,
+        },
+        noDartboards,
+      ),
+    /No candidate pub has a dartboard/,
   );
 });
 

@@ -151,6 +151,7 @@ Create `data/crawl-request.json`:
   "stopCount": 5,
   "requiredBeerTypes": ["ipa", "stout"],
   "requireMeal": true,
+  "requireDartboard": true,
   "minDistanceKm": 2,
   "maxDistanceKm": 5,
   "minPubDistanceKm": 0.2
@@ -164,6 +165,7 @@ Constraints for the first version:
 | `stopCount` | positive integer | Exact number of pubs in the crawl |
 | `requiredBeerTypes` | string[] | Every listed style must occur at least once |
 | `requireMeal` | boolean | At least one selected pub must serve meals |
+| `requireDartboard` | optional boolean | At least one selected pub must have `attributes.hasDartboard` when true |
 | `minDistanceKm` | optional non-negative number | Minimum total route distance |
 | `maxDistanceKm` | optional positive number | Maximum total route distance |
 | `minPubDistanceKm` | optional non-negative number | Minimum straight-line distance between consecutive pubs |
@@ -208,9 +210,9 @@ array[PUBS, NUMBER_ATTRIBUTES] of int: number_attribute;
 array[PUBS, VALUES] of bool: has_value;
 ```
 
-The adapter also supplies the indexes needed by a specific rule. For example,
-a later `requireDartboard` request option can be translated to the
-`hasDartboard` boolean column, while the MiniZinc constraint itself remains a
+The adapter also supplies the data needed by a specific rule. For example,
+the `requireDartboard` request option is translated from each pub's
+`hasDartboard` boolean value, while the MiniZinc constraint itself remains a
 simple `exists` expression.
 
 This is intentionally not a generic constraint language. Adding a silly rule
@@ -259,6 +261,7 @@ Add these constraints:
 - every selected pub is distinct;
 - each required beer style is offered by at least one selected pub;
 - when `requireMeal` is true, at least one selected pub serves meals;
+- when `requireDartboard` is true, at least one selected pub has a dartboard;
 - when supplied, total distance is at least `minDistanceKm`; and
 - when supplied, total distance is at most `maxDistanceKm`.
 - when supplied, every consecutive pub-to-pub leg is at least

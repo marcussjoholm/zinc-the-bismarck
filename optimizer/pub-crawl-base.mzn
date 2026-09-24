@@ -12,6 +12,8 @@ set of int: STOPS = 1..stop_count;
 array[0..pub_count, 0..pub_count] of int: distance_m;
 % Records whether each candidate pub serves a meal.
 array[PUBS] of bool: serves_meals;
+% Records whether each candidate pub has a dartboard.
+array[PUBS] of bool: has_dartboard;
 
 % Receives the number of distinct beer types represented in the input data.
 int: beer_type_count;
@@ -42,6 +44,8 @@ set of int: VALUES = 1..value_count;
 array[PUBS, VALUES] of bool: has_value;
 
 bool: require_meal;
+% Receives whether at least one selected pub must have a dartboard.
+bool: require_dartboard;
 % Receives the minimum allowed distance between consecutive pubs in metres.
 int: min_pub_distance_m;
 int: min_distance_m;
@@ -64,6 +68,11 @@ constraint
 constraint
   not require_meal \/
   exists(stop in STOPS) (serves_meals[route[stop]]);
+
+% Require at least one selected stop to have a dartboard when requested.
+constraint
+  not require_dartboard \/
+  exists(stop in STOPS) (has_dartboard[route[stop]]);
 
 % Keep every consecutive pair of pubs at least the requested distance apart.
 constraint

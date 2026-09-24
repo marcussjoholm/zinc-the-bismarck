@@ -20,6 +20,7 @@ export type CrawlRequest = {
   stopCount: number;
   requiredBeerTypes: string[];
   requireMeal: boolean;
+  requireDartboard: boolean;
   minDistanceKm?: number;
   maxDistanceKm?: number;
   minPubDistanceKm?: number;
@@ -93,6 +94,7 @@ export function parseCrawlRequest(value: unknown, pubs: CandidatePub[]): CrawlRe
     "stopCount",
     "requiredBeerTypes",
     "requireMeal",
+    "requireDartboard",
     "minDistanceKm",
     "maxDistanceKm",
     "minPubDistanceKm",
@@ -131,6 +133,23 @@ export function parseCrawlRequest(value: unknown, pubs: CandidatePub[]): CrawlRe
     value.minPubDistanceKm,
     "minPubDistanceKm",
   );
+  const requireDartboard =
+    value.requireDartboard === undefined
+      ? false
+      : requireBoolean(value.requireDartboard, "requireDartboard");
+
+  if (requireDartboard) {
+    for (const pub of pubs) {
+      if (typeof pub.attributes?.hasDartboard !== "boolean") {
+        throw new Error(
+          `Pub ${pub.id} must have a boolean attributes.hasDartboard value.`,
+        );
+      }
+    }
+    if (!pubs.some((pub) => pub.attributes?.hasDartboard === true)) {
+      throw new Error("No candidate pub has a dartboard.");
+    }
+  }
 
   if (maxDistanceKm === 0) {
     throw new Error("maxDistanceKm must be greater than zero.");
@@ -147,6 +166,7 @@ export function parseCrawlRequest(value: unknown, pubs: CandidatePub[]): CrawlRe
     stopCount,
     requiredBeerTypes,
     requireMeal: requireBoolean(value.requireMeal, "requireMeal"),
+    requireDartboard,
     ...(minDistanceKm === undefined ? {} : { minDistanceKm }),
     ...(maxDistanceKm === undefined ? {} : { maxDistanceKm }),
     ...(minPubDistanceKm === undefined ? {} : { minPubDistanceKm }),
@@ -335,6 +355,9 @@ function createMiniZincData(pubs: CandidatePub[], request: CrawlRequest): string
     `stop_count = ${request.stopCount};`,
     `distance_m = ${matrixLiteral(distances, 0, 0)};`,
     `serves_meals = ${arrayLiteral(pubs.map((pub) => pub.servesMeals))};`,
+    `has_dartboard = ${arrayLiteral(
+      pubs.map((pub) => pub.attributes?.hasDartboard === true),
+    )};`,
     `beer_type_count = ${beerTypes.length};`,
     `has_beer = ${matrixLiteral(
       pubs.map((pub) => beerTypes.map((beerType) => pub.beerTypes.includes(beerType))),
@@ -349,6 +372,7 @@ function createMiniZincData(pubs: CandidatePub[], request: CrawlRequest): string
     `value_count = ${attributes.valueNames.length};`,
     `has_value = ${matrixLiteral(attributes.values)};`,
     `require_meal = ${request.requireMeal};`,
+    `require_dartboard = ${request.requireDartboard};`,
     `min_pub_distance_m = ${Math.round(
       (request.minPubDistanceKm ?? 0) * 1000,
     )};`,

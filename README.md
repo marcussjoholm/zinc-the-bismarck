@@ -62,6 +62,7 @@ The default request is `data/crawl-request.json`:
   "stopCount": 20,
   "requiredBeerTypes": ["lager"],
   "requireMeal": false,
+  "requireDartboard": true,
   "minDistanceKm": 2,
   "maxDistanceKm": 9,
   "minPubDistanceKm": 0.2
@@ -73,6 +74,7 @@ The default request is `data/crawl-request.json`:
 | `stopCount` | positive integer | Exact number of distinct pubs to visit |
 | `requiredBeerTypes` | string array | Each listed type must occur at a selected pub |
 | `requireMeal` | boolean | Require at least one pub that serves meals |
+| `requireDartboard` | boolean, optional | Require at least one pub whose `attributes.hasDartboard` is true; defaults to false |
 | `minDistanceKm` | non-negative number, optional | Minimum total route length |
 | `maxDistanceKm` | positive number, optional | Maximum total route length |
 | `minPubDistanceKm` | non-negative number, optional | Minimum straight-line distance between consecutive pubs |
@@ -117,7 +119,7 @@ shape:
 | `longitude` | number | Between -180 and 180 |
 | `beerTypes` | string array | Used by `requiredBeerTypes` |
 | `servesMeals` | boolean | Used by `requireMeal` |
-| `attributes` | object, optional | Extension point for future constraints |
+| `attributes` | object, optional | Extension point for constraints such as `requireDartboard` |
 
 The supplied beer, meal, and experimental attribute values are illustrative
 demo data, not guaranteed current venue information.
