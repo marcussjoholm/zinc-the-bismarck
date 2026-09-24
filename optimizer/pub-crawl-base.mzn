@@ -42,6 +42,8 @@ set of int: VALUES = 1..value_count;
 array[PUBS, VALUES] of bool: has_value;
 
 bool: require_meal;
+% Receives the minimum allowed distance between consecutive pubs in metres.
+int: min_pub_distance_m;
 int: min_distance_m;
 int: max_distance_m;
 
@@ -62,6 +64,12 @@ constraint
 constraint
   not require_meal \/
   exists(stop in STOPS) (serves_meals[route[stop]]);
+
+% Keep every consecutive pair of pubs at least the requested distance apart.
+constraint
+  forall(stop in 1..stop_count - 1) (
+    distance_m[route[stop], route[stop + 1]] >= min_pub_distance_m
+  );
 
 % Declares a derived variable containing the complete round-trip distance.
 var int: route_distance_m =

@@ -63,7 +63,8 @@ The default request is `data/crawl-request.json`:
   "requiredBeerTypes": ["lager"],
   "requireMeal": false,
   "minDistanceKm": 2,
-  "maxDistanceKm": 9
+  "maxDistanceKm": 9,
+  "minPubDistanceKm": 0.2
 }
 ```
 
@@ -74,6 +75,7 @@ The default request is `data/crawl-request.json`:
 | `requireMeal` | boolean | Require at least one pub that serves meals |
 | `minDistanceKm` | non-negative number, optional | Minimum total route length |
 | `maxDistanceKm` | positive number, optional | Maximum total route length |
+| `minPubDistanceKm` | non-negative number, optional | Minimum straight-line distance between consecutive pubs |
 
 Either distance bound can be omitted. When both are present, the minimum must
 not exceed the maximum.
@@ -82,6 +84,9 @@ Distance uses the Haversine formula: the fastest straight line between each
 coordinate, not actual walking distance. The total starts at the Imperial Hotel
 and follows the pubs in route order before returning to the hotel. The solver,
 terminal result, and map all include this final return leg.
+
+`minPubDistanceKm` applies only to consecutive pub-to-pub legs. The first leg
+from the hotel and the final leg back to it are not constrained by this field.
 
 ## Candidate Pub Data
 

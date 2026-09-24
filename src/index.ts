@@ -123,7 +123,7 @@ function renderRouteMode(): void {
 }
 
 async function loadPinFile(file: string): Promise<PubPin[]> {
-  const response = await fetch(file);
+  const response = await fetch(file, { cache: "no-store" });
 
   if (!response.ok) {
     throw new Error(`Could not load ${file} (${response.status}).`);

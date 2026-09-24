@@ -64,6 +64,7 @@ test("validates the crawl request and distance bounds", () => {
       requireMeal: true,
       minDistanceKm: 2,
       maxDistanceKm: 5,
+      minPubDistanceKm: 0.2,
     },
     pubs,
   );
@@ -71,6 +72,7 @@ test("validates the crawl request and distance bounds", () => {
   assert.equal(request.stopCount, 2);
   assert.equal(request.minDistanceKm, 2);
   assert.equal(request.maxDistanceKm, 5);
+  assert.equal(request.minPubDistanceKm, 0.2);
 });
 
 test("rejects impossible input-level requirements", () => {

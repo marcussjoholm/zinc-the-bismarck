@@ -152,7 +152,8 @@ Create `data/crawl-request.json`:
   "requiredBeerTypes": ["ipa", "stout"],
   "requireMeal": true,
   "minDistanceKm": 2,
-  "maxDistanceKm": 5
+  "maxDistanceKm": 5,
+  "minPubDistanceKm": 0.2
 }
 ```
 
@@ -165,6 +166,7 @@ Constraints for the first version:
 | `requireMeal` | boolean | At least one selected pub must serve meals |
 | `minDistanceKm` | optional non-negative number | Minimum total route distance |
 | `maxDistanceKm` | optional positive number | Maximum total route distance |
+| `minPubDistanceKm` | optional non-negative number | Minimum straight-line distance between consecutive pubs |
 
 Either distance bound may be omitted. When both are supplied,
 `minDistanceKm` must not exceed `maxDistanceKm`. The example asks for a route
@@ -259,6 +261,8 @@ Add these constraints:
 - when `requireMeal` is true, at least one selected pub serves meals;
 - when supplied, total distance is at least `minDistanceKm`; and
 - when supplied, total distance is at most `maxDistanceKm`.
+- when supplied, every consecutive pub-to-pub leg is at least
+  `minPubDistanceKm`.
 
 The objective is:
 
