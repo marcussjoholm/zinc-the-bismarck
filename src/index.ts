@@ -266,7 +266,8 @@ function createUnusedPubMarker(pin: PubPin): any {
 }
 
 function drawAnimatedRoute(): void {
-  if (pubCrawlPins.length < 1) {
+  // Avoid animating if showing ALL routes (start page)
+  if (pubCrawlPins.length < 1 || getRequestedDataFiles().length === 0) {
     return;
   }
 
