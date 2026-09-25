@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Dialekt Beer Bar",
+    "latitude": 55.672482,
+    "longitude": 12.557516
+  },
+  {
+    "name": "Fermentoren",
+    "latitude": 55.6679147,
+    "longitude": 12.5563801
+  },
+  {
+    "name": "Jernbanecafeen",
+    "latitude": 55.6721637,
+    "longitude": 12.5636709
+  },
+  {
+    "name": "Taphouse",
+    "latitude": 55.676199,
+    "longitude": 12.571519
+  },
+  {
+    "name": "SKAAL",
+    "latitude": 55.682326,
+    "longitude": 12.573648
+  },
+  {
+    "name": "Godt Øl",
+    "latitude": 55.6768192,
+    "longitude": 12.5760433
+  },
+  {
+    "name": "Peders",
+    "latitude": 55.679073,
+    "longitude": 12.568998
+  },
+  {
+    "name": "Amager Bryghus Taproom",
+    "latitude": 55.6843528,
+    "longitude": 12.5728215
+  },
+  {
+    "name": "Søhesten",
+    "latitude": 55.6903189,
+    "longitude": 12.5720729
+  },
+  {
+    "name": "Nørrebro Bryghus",
+    "latitude": 55.6902048,
+    "longitude": 12.5638481
+  },
+  {
+    "name": "Væskebalancen",
+    "latitude": 55.6864751,
+    "longitude": 12.5584108
+  },
+  {
+    "name": "Ørsted Ølbar",
+    "latitude": 55.6812668,
+    "longitude": 12.5645148
+  },
+  {
+    "name": "BrewPub Copenhagen",
+    "latitude": 55.677163,
+    "longitude": 12.569487
+  }
+]
