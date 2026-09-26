@@ -10,6 +10,15 @@ set of int: STOPS = 1..stop_count;
 
 % Stores the straight-line distance between every pair of locations in metres; index 0 is the hotel.
 array[0..pub_count, 0..pub_count] of int: distance_m;
+% Maps every undirected pair of locations to an edge id; index 0 is the hotel.
+int: edge_count;
+set of int: EDGES = 1..edge_count;
+array[0..pub_count, 0..pub_count] of 0..edge_count: edge_id;
+% Lists pairs of non-adjacent straight edges that geometrically cross.
+int: crossing_count;
+set of int: CROSSINGS = 1..crossing_count;
+array[CROSSINGS] of EDGES: crossing_edge_a;
+array[CROSSINGS] of EDGES: crossing_edge_b;
 % Records whether each candidate pub serves a meal.
 array[PUBS] of bool: serves_meals;
 % Records whether each candidate pub has a dartboard.
@@ -46,6 +55,8 @@ array[PUBS, VALUES] of bool: has_value;
 bool: require_meal;
 % Receives whether at least one selected pub must have a dartboard.
 bool: require_dartboard;
+% Receives whether the complete round trip must not cross itself.
+bool: prevent_route_crossings;
 % Receives the minimum allowed distance between consecutive pubs in metres.
 int: min_pub_distance_m;
 int: min_distance_m;
@@ -78,6 +89,33 @@ constraint
 constraint
   forall(stop in 1..stop_count - 1) (
     distance_m[route[stop], route[stop + 1]] >= min_pub_distance_m
+  );
+
+% Collect the selected route edges, including both hotel legs.
+int: route_edge_count = stop_count + 1;
+set of int: ROUTE_EDGES = 1..route_edge_count;
+array[ROUTE_EDGES] of var EDGES: route_edge;
+constraint route_edge[1] = edge_id[0, route[1]];
+constraint
+  forall(stop in 1..stop_count - 1) (
+    route_edge[stop + 1] = edge_id[route[stop], route[stop + 1]]
+  );
+constraint route_edge[route_edge_count] = edge_id[route[stop_count], 0];
+
+% Mark every undirected edge used by the round trip.
+array[EDGES] of var bool: selected_edge;
+constraint
+  forall(edge in EDGES) (
+    selected_edge[edge] <->
+    exists(step in ROUTE_EDGES) (route_edge[step] = edge)
+  );
+
+% Never select both members of a crossing pair when the rule is enabled.
+constraint
+  not prevent_route_crossings \/
+  forall(crossing in CROSSINGS) (
+    not selected_edge[crossing_edge_a[crossing]] \/
+    not selected_edge[crossing_edge_b[crossing]]
   );
 
 % Declares a derived variable containing the complete round-trip distance.

@@ -152,6 +152,7 @@ Create `data/crawl-request.json`:
   "requiredBeerTypes": ["ipa", "stout"],
   "requireMeal": true,
   "requireDartboard": true,
+  "preventRouteCrossings": true,
   "minDistanceKm": 2,
   "maxDistanceKm": 5,
   "minPubDistanceKm": 0.2
@@ -166,6 +167,7 @@ Constraints for the first version:
 | `requiredBeerTypes` | string[] | Every listed style must occur at least once |
 | `requireMeal` | boolean | At least one selected pub must serve meals |
 | `requireDartboard` | optional boolean | At least one selected pub must have `attributes.hasDartboard` when true |
+| `preventRouteCrossings` | optional boolean | No two separate straight route segments may cross when true |
 | `minDistanceKm` | optional non-negative number | Minimum total route distance |
 | `maxDistanceKm` | optional positive number | Maximum total route distance |
 | `minPubDistanceKm` | optional non-negative number | Minimum straight-line distance between consecutive pubs |
@@ -177,6 +179,10 @@ that is at least 2 km and at most 5 km long.
 The hotel remains fixed in code/config for this demo because the map already
 uses the Imperial Hotel. Making arbitrary start locations configurable can wait
 until there is a real need.
+
+When `preventRouteCrossings` is enabled, TypeScript precomputes which possible
+straight edge pairs intersect on the map. MiniZinc then prevents both edges in
+any such pair from appearing in the complete hotel-to-hotel route.
 
 ## Extensibility for Future Constraints
 

@@ -1,8 +1,9 @@
 {
-  "stopCount": 13,
+  "stopCount": 10,
   "requiredBeerTypes": ["lager", "sour", "stout", "ipa", "alcohol-free"],
   "requireMeal": true,
   "requireDartboard": true,
+  "preventRouteCrossings": true,
   "minDistanceKm": 0,
   "maxDistanceKm": 10,
   "minPubDistanceKm": 0.5

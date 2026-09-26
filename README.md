@@ -63,6 +63,7 @@ The default request is `data/crawl-request.json`:
   "requiredBeerTypes": ["lager"],
   "requireMeal": false,
   "requireDartboard": true,
+  "preventRouteCrossings": true,
   "minDistanceKm": 2,
   "maxDistanceKm": 9,
   "minPubDistanceKm": 0.2
@@ -75,6 +76,7 @@ The default request is `data/crawl-request.json`:
 | `requiredBeerTypes` | string array | Each listed type must occur at a selected pub |
 | `requireMeal` | boolean | Require at least one pub that serves meals |
 | `requireDartboard` | boolean, optional | Require at least one pub whose `attributes.hasDartboard` is true; defaults to false |
+| `preventRouteCrossings` | boolean, optional | Prevent the straight route from crossing itself; defaults to false |
 | `minDistanceKm` | non-negative number, optional | Minimum total route length |
 | `maxDistanceKm` | positive number, optional | Maximum total route length |
 | `minPubDistanceKm` | non-negative number, optional | Minimum straight-line distance between consecutive pubs |
@@ -89,6 +91,10 @@ terminal result, and map all include this final return leg.
 
 `minPubDistanceKm` applies only to consecutive pub-to-pub legs. The first leg
 from the hotel and the final leg back to it are not constrained by this field.
+
+`preventRouteCrossings` applies to the complete round trip, including both hotel
+legs. Consecutive legs may still meet at their shared stop; only intersections
+between otherwise separate route segments are forbidden.
 
 ## Candidate Pub Data
 

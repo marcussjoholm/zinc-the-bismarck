@@ -7,6 +7,7 @@ import {
   parseCandidatePubs,
   parseCrawlRequest,
   parseSolverOutput,
+  straightSegmentsCross,
   type CandidatePub,
 } from "./optimize.js";
 
@@ -37,6 +38,22 @@ test("calculates the same Haversine distance convention as the map", () => {
   assert.ok(calculateDistanceMetres(pubs[0], pubs[1]) < 1_400);
 });
 
+test("detects crossings between straight map segments", () => {
+  const southWest = { latitude: 55.67, longitude: 12.55 };
+  const northWest = { latitude: 55.68, longitude: 12.55 };
+  const southEast = { latitude: 55.67, longitude: 12.57 };
+  const northEast = { latitude: 55.68, longitude: 12.57 };
+
+  assert.equal(
+    straightSegmentsCross(southWest, northEast, northWest, southEast),
+    true,
+  );
+  assert.equal(
+    straightSegmentsCross(southWest, northWest, southEast, northEast),
+    false,
+  );
+});
+
 test("normalizes extensible attributes into typed matrices", () => {
   const matrices = buildAttributeMatrices(pubs);
 
@@ -64,6 +81,7 @@ test("validates the crawl request and distance bounds", () => {
       requiredBeerTypes: ["ipa", "stout"],
       requireMeal: true,
       requireDartboard: true,
+      preventRouteCrossings: true,
       minDistanceKm: 2,
       maxDistanceKm: 5,
       minPubDistanceKm: 0.2,
@@ -73,6 +91,7 @@ test("validates the crawl request and distance bounds", () => {
 
   assert.equal(request.stopCount, 2);
   assert.equal(request.requireDartboard, true);
+  assert.equal(request.preventRouteCrossings, true);
   assert.equal(request.minDistanceKm, 2);
   assert.equal(request.maxDistanceKm, 5);
   assert.equal(request.minPubDistanceKm, 0.2);
