@@ -11,6 +11,7 @@ optimization finds and proves the shortest valid route.
 
 - Node.js and npm
 - [MiniZinc](https://www.minizinc.org/downloads/) with the free Gecode solver
+- An internet connection while using the map, for Leaflet and OpenStreetMap tiles
 
 Install the JavaScript dependencies and check MiniZinc:
 
@@ -53,20 +54,35 @@ npm run satisfy:demo
 Use `npm run optimize` when you need the shortest route. It can take much
 longer because MiniZinc must prove that no better route exists.
 
+## Map Views
+
+The map has three built-in views, available from the `Alla`, `Okej`, and
+`Optimal` buttons:
+
+| View | URL | What it shows |
+| --- | --- | --- |
+| All pubs | `http://127.0.0.1:4173/` | Every pub in `data/pubs.json`, with no route lines |
+| First valid route | `http://127.0.0.1:4173/?data=data/satisfied-crawl.json` | The latest satisfaction result |
+| Optimal route | `http://127.0.0.1:4173/?data=data/optimized-crawl.json` | The latest optimized result |
+
+Both solution views show the selected pubs as numbered stops, draw and animate
+the complete hotel-to-hotel route, and keep unselected pubs visible in a muted
+color. The map fits itself around the selected route.
+
 ## Crawl Constraints
 
 The default request is `data/crawl-request.json`:
 
 ```json
 {
-  "stopCount": 20,
-  "requiredBeerTypes": ["lager"],
-  "requireMeal": false,
+  "stopCount": 10,
+  "requiredBeerTypes": ["lager", "sour", "stout", "ipa", "alcohol-free"],
+  "requireMeal": true,
   "requireDartboard": true,
   "preventRouteCrossings": true,
-  "minDistanceKm": 2,
-  "maxDistanceKm": 9,
-  "minPubDistanceKm": 0.2
+  "minDistanceKm": 0,
+  "maxDistanceKm": 10,
+  "minPubDistanceKm": 0.5
 }
 ```
 
@@ -84,22 +100,25 @@ The default request is `data/crawl-request.json`:
 Either distance bound can be omitted. When both are present, the minimum must
 not exceed the maximum.
 
-Distance uses the Haversine formula: the fastest straight line between each
-coordinate, not actual walking distance. The total starts at the Imperial Hotel
-and follows the pubs in route order before returning to the hotel. The solver,
-terminal result, and map all include this final return leg.
+Distance uses the Haversine formula: a straight-line estimate between
+coordinates, not actual walking distance. The total starts at the Imperial
+Hotel and follows the pubs in route order before returning to the hotel. The
+solver, terminal result, and map all include this final return leg.
 
 `minPubDistanceKm` applies only to consecutive pub-to-pub legs. The first leg
 from the hotel and the final leg back to it are not constrained by this field.
 
 `preventRouteCrossings` applies to the complete round trip, including both hotel
 legs. Consecutive legs may still meet at their shared stop; only intersections
-between otherwise separate route segments are forbidden.
+between otherwise separate route segments are forbidden. TypeScript
+precalculates intersecting straight map segments, then MiniZinc prevents those
+edge pairs from appearing together in a route.
 
 ## Candidate Pub Data
 
-The default candidate list is `data/pub-candidates.json`. Each entry has this
-shape:
+The optimizer's default candidate list is `data/pub-candidates.json`. It
+contains the same 36 pubs and coordinates as the map's `data/pubs.json`, plus
+the properties used by the constraints. Each entry has this shape:
 
 ```json
 {
@@ -183,7 +202,8 @@ View a custom output by passing it to the map:
 http://127.0.0.1:4173/?data=data/my-crawl.json
 ```
 
-The map can combine ordered JSON files by repeating the parameter:
+The map can combine ordered JSON files by repeating the parameter. Their pins
+are concatenated and treated as one route:
 
 ```text
 http://127.0.0.1:4173/?data=data/first.json&data=data/second.json
